@@ -1,10 +1,11 @@
 import { el, setChildren, mount } from 'redom'
+import QRCode from 'qrcode'
 
 class Dom {
   constructor() {
-    this.container = el('div', {
+    this.body = el('div', {
       style: {
-        background: 'rgba(0, 0, 0, 0.5)',
+        background: 'rgba(0, 0, 0, 0.75)',
         position: 'fixed',
         top: 0,
         left: 0,
@@ -12,35 +13,74 @@ class Dom {
         height: '100%',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 120391023182312,
+        zIndex: 9999999999999999,
+        paddingTop: '5%',
       }
     })
 
-    this.content = el('div', {
+    this.main = el('div', {
       style: {
+        position: 'relative',
         background: 'white',
-        borderRadius: 6,
-        width: 300,
-        height: 600,
+        width: 320,
+        height: 400,
+        padding: 20,
+        textAlign: 'center',
       }
     })
+
+    const header = el('h3', 'Accept Nano')
+
+    const footer = el('span', {
+      style: {
+        position: 'absolute',
+        bottom: 20,
+        right: 0,
+        width: '100%',
+        textAlign: 'center',
+      },
+    }, 'accept-nano.com')
+
+    this.content = el('div')
+
+    setChildren(this.main, [
+      header,
+      this.content,
+      footer,
+    ])
   }
 
   mount(targetElement) {
-    mount(targetElement, this.container)
+    mount(targetElement, this.body)
   }
 
   showLoading() {
     const loading = el('span', 'Loading')
-    setChildren(this.container, loading)
+    setChildren(this.body, loading)
   }
 
   showPaymentInfo(data) {
     const { account, amount } = data
-    const paymentInfo = el('div', `${account} - ${amount}`)
-    setChildren(this.content, paymentInfo)
-    setChildren(this.container, this.content)
+
+    const accountText = el('p', {
+      style: {
+        wordWrap: 'break-word',
+      },
+    }, account)
+    const amountText = el('p', amount)
+    const paymentInfo = el('div', [accountText, amountText])
+
+    const qrText = `xrb:${account}?amount=${amount}`
+    const qrCanvas= el('canvas')
+
+    QRCode.toCanvas(qrCanvas, qrText, (error) => {
+      if (error) {
+        console.error(error)
+      }
+
+      setChildren(this.content, [qrCanvas, paymentInfo])
+      setChildren(this.body, this.main)
+    })
   }
 
   showPaymentSucceededMessage(data) {
