@@ -24,6 +24,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "qrcode": "^1.2.0",
-    "redom": "^3.12.6"
+    "redom": "^3.12.6",
+    "spin.js": "^4.0.0"
   }
 }

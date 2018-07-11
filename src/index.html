@@ -11,8 +11,16 @@
     var button = document.getElementById('paymentButton')
 
     button.addEventListener('click', function() {
-      var acceptNano = new window.AcceptNano()
-      acceptNano.startPayment({ amount: 0.000001, currency: 'nano', state: 'state' })
+      window.acceptNano.setup().startPayment({
+        data: {
+          amount: 0.000001,
+          currency: 'nano',
+          state: 'state',
+        },
+        onStart: (data) => console.log('CLIENT EVENT: started', data),
+        onSuccess: (data) => console.log('CLIENT EVENT: success', data),
+        onFailure: (error) => console.log('CLIENT EVENT: failure', error),
+      })
     })
   </script>
 </body>
