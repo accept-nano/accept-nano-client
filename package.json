@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel demo/index.html --global acceptNano",
+    "start": "parcel demo/index.html --global acceptNano --no-cache",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
-    "build": "parcel build src/index.js --global acceptNano"
+    "build": "parcel build src/index.js --global acceptNano --no-cache"
   },
   "repository": {
     "type": "git",
