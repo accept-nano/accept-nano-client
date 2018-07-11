@@ -1,6 +1,6 @@
 {
   "name": "@accept-nano/client",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "JavaScript client for accept-nano payment gateway.",
   "main": "dist/index.js",
   "scripts": {

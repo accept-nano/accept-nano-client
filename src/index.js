@@ -56,7 +56,7 @@ class AcceptNano {
 
     this.api.verify(token)
       .then(({ data }) => {
-        if (data.fulfilled) {
+        if (data.merchantNotified) {
           return this.onPaymentSucceeded(data)
         }
 
