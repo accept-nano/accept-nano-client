@@ -1,25 +1,82 @@
 <html>
   <head>
     <script src="../src/index.js"></script>
+    <style>
+      body {
+        background: #f7f7f7;
+      }
+
+      main {
+        width: 360;
+        margin: 60px auto;
+        border: 1px solid #ddd;
+        padding: 20px;
+        background: white;
+      }
+
+      main label,
+      main input {
+        display: block;
+        width: 100%;
+      }
+
+      main label {
+        font-weight: bold;
+      }
+
+      main input {
+        margin-top: 5px;
+        margin-bottom: 20px;
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      main button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    </style>
   </head>
 <body>
-  <button id="paymentButton">
-    Start!
-  </button>
+  <main>
+    <form id="paymentForm">
+
+      <label>URL</label>
+      <input type="text" name="url" value="https://accept-nano.put.io/api" />
+
+      <label>Amount</label>
+      <input type="text" name="amount" value="0.000001" />
+
+      <label>Currency</label>
+      <input type="text" name="currency" value="nano" />
+
+      <label>State</label>
+      <input type="text" name="state" value="" />
+
+      <button type="submit">
+        Start
+      </button>
+    </form>
+  </main>
 
   <script>
-    var button = document.getElementById('paymentButton')
+    var form = document.getElementById('paymentForm')
 
-    button.addEventListener('click', function() {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault()
+
       window.acceptNano
         .setup({
-          url: 'https://accept-nano.put.io/api',
+          url: form.url.value,
         })
         .startPayment({
           data: {
-            amount: '0.000001',
-            currency: 'nano',
-            state: 'state',
+            amount: form.amount.value,
+            currency: form.currency.value,
+            state: form.state.value,
           },
           onStart: (data) => console.log('CLIENT EVENT: started', data),
           onSuccess: (data) => console.log('CLIENT EVENT: success', data),

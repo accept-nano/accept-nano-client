@@ -94,6 +94,7 @@ class AcceptNano {
   onClose() {
     if (this.state === AcceptNano.STATES.STARTED) {
       this.shouldVerify = false
+      this.log('Payment Cancelled')
     }
 
     this.reset()
