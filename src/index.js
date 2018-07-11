@@ -20,7 +20,6 @@ class AcceptNano {
     this.onSuccess = null
     this.onFailure = null
     this.state = AcceptNano.STATES.UNINITIALIZED
-    this.shouldVerify = true
   }
 
   startPayment({ data, onStart, onSuccess, onFailure }) {
@@ -43,6 +42,8 @@ class AcceptNano {
         }
 
         this.dom.showPaymentInfo(data)
+
+        this.shouldVerify = true
         this.verifyPayment(data.token)
       })
       .catch((error) => {
@@ -123,5 +124,5 @@ AcceptNano.STATES = {
   FAILED: 4,
 }
 
-window.acceptNano = new AcceptNano()
+module.exports = new AcceptNano()
 

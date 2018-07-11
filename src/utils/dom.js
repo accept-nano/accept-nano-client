@@ -211,6 +211,7 @@ class DOM {
     this.statusBar.textContent = 'Success'
     setStyle(this.statusBar, { background: DOM.colors.green })
     setChildren(this.content, [title, message, button])
+    setChildren(this.container, this.main)
   }
 
   showPaymentFailureMessage(error) {
@@ -227,6 +228,7 @@ class DOM {
     this.statusBar.textContent = 'Error!'
     setStyle(this.statusBar, { background: DOM.colors.red})
     setChildren(this.content, [title, message, button])
+    setChildren(this.container, this.main)
   }
 }
 

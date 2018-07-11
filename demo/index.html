@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script src="../src/index.js"></script>
+  </head>
+<body>
+  <button id="paymentButton">
+    Start!
+  </button>
+
+  <script>
+    var button = document.getElementById('paymentButton')
+
+    button.addEventListener('click', function() {
+      window.acceptNano
+        .setup({
+          url: 'https://accept-nano.put.io/api',
+        })
+        .startPayment({
+          data: {
+            amount: '0.000001',
+            currency: 'nano',
+            state: 'state',
+          },
+          onStart: (data) => console.log('CLIENT EVENT: started', data),
+          onSuccess: (data) => console.log('CLIENT EVENT: success', data),
+          onFailure: (error) => console.log('CLIENT EVENT: failure', error),
+        })
+    })
+  </script>
+</body>
+</html>
