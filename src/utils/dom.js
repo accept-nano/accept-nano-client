@@ -9,48 +9,48 @@ class DOM {
 
     this.container = el('div', {
       id: 'accept-nano',
-      style: {
-        fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`,
-        background: 'rgba(32, 36, 47, 0.8)',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        zIndex: 999999999999999,
-        overflow: 'scroll',
-      }
+      style: `
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        background: rgba(32, 36, 47, 0.8)!important;
+        position: fixed!important;
+        top: 0!important;
+        left: 0!important;
+        width: 100%!important;
+        height: 100%!important;
+        display: flex!important;
+        justify-content: center!important;
+        z-index: 999999999999999!important;
+        overflow: scroll!important;
+      `
     })
 
     this.main = el('div', {
-      style: {
-        position: 'absolute',
-        margin: '5% 0',
-        background: '#F8F8F8',
-        width: 360,
-        height: 'auto',
-        textAlign: 'center',
-        borderRadius: DOM.sharedStyles.mainBorderRadius,
-        boxShadow: '0 2px 32px 0 rgba(0, 0, 0, 0.85)',
-      }
+      style: `
+        position: absolute!important;
+        margin: 5% 0!important;
+        background: #F8F8F8!important;
+        width: 360px!important;
+        height: auto!important;
+        text-align: center!important;
+        border-radius: ${DOM.sharedStyles.mainBorderRadius}!important;
+        box-shadow: 0 2px 32px 0 rgba(0, 0, 0, 0.85)!important;
+      `
     })
 
     this.statusBar = el('div', {
-      style: {
-        color: 'white',
-        background: DOM.colors.navy,
-        fontSize: 12,
-        padding: 8,
-      }
+      style: `
+        color: white!important;
+        background: ${DOM.colors.navy}!important;
+        font-size: 12px!important;
+        padding: 8px!important;
+      `
     }, 'Waiting for Payment...')
 
 
     this.content = el('div', {
-      style: {
-        padding: '20px 30px',
-      },
+      style: `
+        padding: 20px 30px!important;
+      `,
     })
 
     this.createHeader()
@@ -66,36 +66,36 @@ class DOM {
 
   createHeader() {
     this.header = el('div', {
-      style: {
-        background: DOM.colors.blue,
-        padding: 20,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderTopLeftRadius:  DOM.sharedStyles.mainBorderRadius,
-        borderTopRightRadius:  DOM.sharedStyles.mainBorderRadius,
-      },
+      style: `
+        background: ${DOM.colors.blue}!important;
+        padding: 20px!important;
+        display: flex!important;
+        align-items: center!important;
+        justify-content: space-between!important;
+        border-top-left-radius:  ${DOM.sharedStyles.mainBorderRadius}!important;
+        border-top-right-radius:  ${DOM.sharedStyles.mainBorderRadius}!important;
+      `,
     })
 
     const headerTitle = el('img', {
       src: 'https://nano.org/assets/img/logo-white.svg',
-      style: {
-        maxWidth: 120,
-        height: 'auto',
-      }
+      style: `
+        max-width: 120px!important;
+        height: auto!important;
+      `
     })
 
     const headerCloseButton = el('button', {
-      style: {
-        fontSize: 16,
-        color: 'rgba(255, 255, 255, 0.5)',
-        background: 'transparent',
-        padding: 0,
-        margin: 0,
-        border: 'none',
-        outline: 'none',
-        cursor: 'pointer',
-      },
+      style: `
+        font-size: 16px!important;
+        color: rgba(255, 255, 255, 0.5)!important;
+        background: transparent!important;
+        padding: 0!important;
+        margin: 0!important;
+        border: none!important;
+        outline: none!important;
+        cursor: pointer!important;
+      `,
       onclick: this.onClose,
     }, 'X')
 
@@ -104,16 +104,16 @@ class DOM {
 
   createFooter() {
     this.footer = el('div', {
-      style: {
-        position: 'absolute',
-        bottom: -30,
-        right: 0,
-        width: '100%',
-        textAlign: 'center',
-        fontSize: 12,
-        fontStyle: 'italic',
-        color: '#ccc',
-      },
+      style: `
+        position: absolute!important;
+        bottom: -30px!important;
+        right: 0!important;
+        width: 100%!important;
+        text-align: center!important;
+        font-size: 12px!important;
+        font-style: italic!important;
+        color: #ccc!important;
+      `,
     })
 
     const footerSpan = el('span', 'Powered by')
@@ -121,10 +121,10 @@ class DOM {
     const footerLink = el('a', {
       href: 'https://accept-nano.com',
       target: '_blank',
-      style: {
-        paddingLeft: 5,
-        color: '#ccc',
-      },
+      style: `
+        padding-left: 5px!important;
+        color: #ccc!important;
+      `,
     }, 'accept-nano.com')
 
     setChildren(this.footer, [footerSpan, footerLink])
@@ -169,7 +169,7 @@ class DOM {
   showPaymentInfo(data) {
     const { account, amount } = data
 
-    const accountHeader = el('h5', { style: DOM.sharedStyles.infoHeader }, 'Wallet Address')
+    const accountHeader = el('h5', { style: DOM.sharedStyles.infoHeader }, 'Account Address')
     const accountText = el('p', { style: DOM.sharedStyles.infoText }, account)
 
     const amountHeader = el('h5', { style: DOM.sharedStyles.infoHeader }, 'Amount')
@@ -179,12 +179,12 @@ class DOM {
 
     const qrText = `xrb:${account}?amount=${amount}`
     const qrCanvas= el('canvas', {
-      style: {
-        background: 'white',
-        padding: 24,
-        border: '1px solid #e9e9e9',
-        borderRadius: '5px',
-      }
+      style: `
+        background: white!important;
+        padding: 24px!important;
+        border: 1px solid #e9e9e9!important;
+        border-radius: 5px!important;
+      `
     })
 
     QRCode.toCanvas(qrCanvas, qrText, (error) => {
@@ -202,9 +202,10 @@ class DOM {
     const message = el('p', `We've successfully received your payment.`)
 
     const button = el('button', {
-      style: Object.assign({}, DOM.sharedStyles.actionButton, {
-        background: DOM.colors.green,
-      }),
+      style: `
+        ${DOM.sharedStyles.actionButton}
+        background: ${DOM.colors.green}!important;
+      `,
       onclick: this.onClose,
     }, 'Done')
 
@@ -219,9 +220,10 @@ class DOM {
     const message = el('p', `An error occurred: ${error}`)
 
     const button = el('button', {
-      style: Object.assign({}, DOM.sharedStyles.actionButton, {
-        background: DOM.colors.red,
-      }),
+      style: `
+        ${DOM.sharedStyles.actionButton}
+        background: ${DOM.colors.red}!important;
+      `,
       onclick: this.onClose,
     }, 'Close')
 
@@ -241,31 +243,31 @@ DOM.colors = {
 
 DOM.sharedStyles = {
   mainBorderRadius: '6px',
-  actionButton: {
-    border: 'none',
-    outline: 'none',
-    borderRadius: '6px',
-    fontSize: 16,
-    padding: '12px 24px',
-    fontWeight: 'bold',
-    color: 'white',
-    textTransform: 'uppercase',
-    margin: 20,
-    boxShadow: '0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08)',
-    cursor: 'pointer',
-    letterSpacing: 0.5,
-  },
-  infoHeader: {
-    textTransform: 'uppercase',
-    color: '#000134',
-    marginBottom: 5,
-  },
-  infoText: {
-    wordWrap: 'break-word',
-    marginTop: 0,
-    fontSize: 14,
-    color: '#424754',
-  },
+  actionButton: `
+    border: none!important;
+    outline: none!important;
+    border-radius: 6px!important;
+    font-size: 16px!important;
+    padding: 12px 24px!important;
+    font-weight: bold!important;
+    color: white!important;
+    margin: 20px!important;
+    box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08)!important;
+    cursor: pointer!important;
+    text-transform: uppercase!important;
+    letter-spacing: 0.5!important;
+  `,
+  infoHeader: `
+    text-transform: uppercase!important;
+    color: #000134!important;
+    margin-bottom: 5px!important;
+  `,
+  infoText: `
+    word-wrap: break-word!important;
+    margin-top: 0!important;
+    font-size: 14px!important;
+    color: #424754!important;
+  `,
   spinner: {
     lines: 11,
     length: 5,
