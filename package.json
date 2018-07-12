@@ -1,6 +1,6 @@
 {
   "name": "@accept-nano/client",
-  "version": "0.0.7",
+  "version": "1.0.7",
   "description": "JavaScript client for accept-nano payment gateway.",
   "main": "dist/index.js",
   "scripts": {
@@ -29,18 +29,9 @@
     "parcel-bundler": "^1.9.4"
   },
   "dependencies": {
-<<<<<<< HEAD
     "axios": "^0.18.0",
     "qrcode": "^1.2.0",
     "redom": "^3.12.6",
     "spin.js": "^4.0.0"
   }
-=======
-    "axios": "0.18.0",
-    "qrcode": "1.2.0",
-    "redom": "3.12.6",
-    "spin.js": "4.0.0"
-  },
-  "version": "1.0.7"
->>>>>>> 4944704... 1.0.7
 }
