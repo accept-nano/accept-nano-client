@@ -3,7 +3,6 @@ language: node_js
 node_js:
 - '9'
 before_deploy:
-  - git checkout -- package-lock.json
   - npm version $TRAVIS_TAG
 deploy:
   provider: npm
