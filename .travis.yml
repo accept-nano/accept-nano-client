@@ -2,8 +2,6 @@ dist: trusty
 language: node_js
 node_js:
 - '9'
-before_deploy:
-  - npm version $TRAVIS_TAG
 deploy:
   provider: npm
   email: altay.aydemir@gmail.com
