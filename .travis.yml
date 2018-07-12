@@ -2,7 +2,7 @@ dist: trusty
 language: node_js
 node_js:
 - '9'
-before_deploy:
+before_script:
   npm version $TRAVIS_TAG
 deploy:
   provider: npm
