@@ -45,7 +45,7 @@
     <form id="paymentForm">
 
       <label>URL</label>
-      <input type="text" name="url" value="https://accept-nano.put.io/api" />
+      <input type="text" name="apiURL" value="https://accept-nano.put.io/api" />
 
       <label>Amount</label>
       <input type="text" name="amount" value="0.000001" />
@@ -70,7 +70,7 @@
 
       window.acceptNano
         .setup({
-          url: form.url.value,
+          apiURL: form.apiURL.value,
         })
         .startPayment({
           data: {
@@ -81,6 +81,7 @@
           onStart: (data) => console.log('CLIENT EVENT: started', data),
           onSuccess: (data) => console.log('CLIENT EVENT: success', data),
           onFailure: (error) => console.log('CLIENT EVENT: failure', error),
+          onCancel: () => console.log('CLIENT EVENT: cancelled'),
         })
     })
   </script>

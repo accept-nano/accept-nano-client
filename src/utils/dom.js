@@ -3,8 +3,7 @@ import { Spinner } from 'spin.js'
 import QRCode from 'qrcode'
 
 class DOM {
-  constructor(target, onClose) {
-    this.target = target || document.body
+  constructor({ onClose }) {
     this.onClose = onClose
 
     this.container = el('div', {
@@ -131,11 +130,11 @@ class DOM {
   }
 
   mount() {
-    mount(this.target, this.container)
+    mount(document.body, this.container)
   }
 
   unmount() {
-    unmount(this.target, this.container)
+    unmount(document.body, this.container)
   }
 
   showLoading() {
@@ -169,14 +168,6 @@ class DOM {
   showPaymentInfo(data) {
     const { account, amount } = data
 
-    const accountHeader = el('h5', { style: DOM.sharedStyles.infoHeader }, 'Account Address')
-    const accountText = el('p', { style: DOM.sharedStyles.infoText }, account)
-
-    const amountHeader = el('h5', { style: DOM.sharedStyles.infoHeader }, 'Amount')
-    const amountText = el('p', { style: DOM.sharedStyles.infoText }, `${amount} NANO`)
-
-    const paymentInfo = el('div', [accountHeader, accountText, amountHeader, amountText])
-
     const qrText = `xrb:${account}?amount=${amount}`
     const qrCanvas= el('canvas', {
       style: `
@@ -186,6 +177,14 @@ class DOM {
         border-radius: 5px!important;
       `
     })
+
+    const accountHeader = el('h5', { style: DOM.sharedStyles.infoHeader }, 'Account Address')
+    const accountText = el('p', { style: DOM.sharedStyles.infoText }, account)
+
+    const amountHeader = el('h5', { style: DOM.sharedStyles.infoHeader }, 'Amount')
+    const amountText = el('p', { style: DOM.sharedStyles.infoText }, `${amount} NANO`)
+
+    const paymentInfo = el('div', [accountHeader, accountText, amountHeader, amountText])
 
     QRCode.toCanvas(qrCanvas, qrText, (error) => {
       if (error) {
@@ -198,7 +197,7 @@ class DOM {
   }
 
   showPaymentSucceededMessage(data) {
-    const title = el('h2', 'Thank You!')
+    const title = el('h2', { style: DOM.sharedStyles.titleHeader }, 'Thank you')
     const message = el('p', `We've successfully received your payment.`)
 
     const button = el('button', {
@@ -216,7 +215,7 @@ class DOM {
   }
 
   showPaymentFailureMessage(error) {
-    const title = el('h2', 'Oops!')
+    const title = el('h2', { style: DOM.sharedStyles.titleHeader }, 'Oops!')
     const message = el('p', `An error occurred: ${error}`)
 
     const button = el('button', {
@@ -257,10 +256,16 @@ DOM.sharedStyles = {
     text-transform: uppercase!important;
     letter-spacing: 0.5!important;
   `,
+  titleHeader: `
+    margin: 20px 0!important;
+    font-size: 24px!important;
+  `,
   infoHeader: `
     text-transform: uppercase!important;
     color: #000134!important;
+    margin-top: 20px!important;
     margin-bottom: 5px!important;
+    font-size: 13px!important;
   `,
   infoText: `
     word-wrap: break-word!important;

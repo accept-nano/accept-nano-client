@@ -1,13 +1,13 @@
 {
   "name": "@accept-nano/client",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "description": "JavaScript client for accept-nano payment gateway.",
   "main": "dist/index.js",
   "scripts": {
     "start": "parcel demo/index.html --global acceptNano --no-cache",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
-    "build": "parcel build src/index.js --global acceptNano --no-cache"
+    "build": "parcel build src/index.js --global acceptNano --no-cache --out-file index.js"
   },
   "repository": {
     "type": "git",

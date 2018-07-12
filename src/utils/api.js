@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 class ApiClient {
-  constructor(url) {
+  constructor({ url }) {
     this.baseURL = url
   }
 

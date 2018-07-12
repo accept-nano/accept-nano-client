@@ -8,21 +8,25 @@ class AcceptNano {
 
   setup(options = {}) {
     this.options = Object.assign({}, AcceptNano.DEFAULT_OPTIONS, options)
-    this.api = new Api(this.options.url)
-    this.dom = new DOM(this.options.target, this.onClose)
+    this.api = new Api({ url: this.options.apiURL })
+    this.dom = new DOM({ onClose: this.onClose })
     this.reset()
 
     return this
   }
 
   reset() {
+    this.state = AcceptNano.STATES.UNINITIALIZED
+
     this.onStart = null
     this.onSuccess = null
     this.onFailure = null
-    this.state = AcceptNano.STATES.UNINITIALIZED
+    this.onCancel = null
+
+    return this
   }
 
-  startPayment({ data, onStart, onSuccess, onFailure }) {
+  startPayment({ data, onStart, onSuccess, onFailure, onCancel }) {
     this.log('Payment Starting', data)
 
     this.dom.mount()
@@ -32,6 +36,7 @@ class AcceptNano {
     this.onStart = onStart
     this.onSuccess = onSuccess
     this.onFailure = onFailure
+    this.onCancel = onCancel
 
     this.api.pay(data)
       .then(({ data }) => {
@@ -71,7 +76,6 @@ class AcceptNano {
 
   onPaymentSucceeded(data) {
     this.log('Payment Succeeded', data)
-
     this.state = AcceptNano.STATES.SUCCEEDED
     this.dom.showPaymentSucceededMessage(data)
 
@@ -82,7 +86,6 @@ class AcceptNano {
 
   onPaymentFailed(error) {
     this.log('Payment Failed', error)
-
     this.state = AcceptNano.STATES.FAILED
     this.dom.showPaymentFailureMessage(error)
 
@@ -95,6 +98,10 @@ class AcceptNano {
     if (this.state === AcceptNano.STATES.STARTED) {
       this.shouldVerify = false
       this.log('Payment Cancelled')
+
+      if (typeof this.onCancel === 'function') {
+        this.onCancel()
+      }
     }
 
     this.reset()
@@ -111,10 +118,9 @@ class AcceptNano {
 }
 
 AcceptNano.DEFAULT_OPTIONS = {
-  debug: true,
+  debug: false,
   pollInterval: 1500,
-  target: null,
-  url: null,
+  apiURL: null,
 }
 
 AcceptNano.STATES = {
