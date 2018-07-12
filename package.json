@@ -25,12 +25,12 @@
   },
   "homepage": "https://github.com/accept-nano/accept-nano-client#readme",
   "devDependencies": {
-    "parcel-bundler": "^1.9.4"
+    "parcel-bundler": "1.9.4"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "qrcode": "^1.2.0",
-    "redom": "^3.12.6",
-    "spin.js": "^4.0.0"
+    "axios": "0.18.0",
+    "qrcode": "1.2.0",
+    "redom": "3.12.6",
+    "spin.js": "4.0.0"
   }
 }
