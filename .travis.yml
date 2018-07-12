@@ -2,7 +2,7 @@ dist: trusty
 language: node_js
 node_js:
 - '9'
-before_deploy: npm run build
+script: npm run build
 deploy:
   provider: npm
   email: altay.aydemir@gmail.com
