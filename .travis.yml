@@ -1,0 +1,14 @@
+dist: trusty
+language: node_js
+node_js:
+- '9'
+before_deploy:
+  - npm version $TRAVIS_TAG
+deploy:
+  provider: npm
+  email: altay.aydemir@gmail.com
+  api_key:
+    secure: RXXjOiUVxvLH13Rf1NCtII/9DqgIA522IAvGkz9WU9Q8iNwUa9et272izg+hN4JIarAoj6frxHbGnw65EyovWIvUdohc3FsfSEubCjb+bpG3VMg00VEK0t9uVrDRkcKFRfp2hhsGB2A5KRK3cyd9/xNu/NCqWjxPPaJeJN2rb/VO14ujH0/z3TmxO65q9OsexZw4WxgKfwoAzObpTM81T0X3YMAPioI9Nl/vcCmWaDqAV0It0/fDDJFLHG1/19QawqoM+bYlzs6hSqM8oIxuomMVcnLv7/SKxsnuytinEQN7KbZ1km2f4BCzgQL7+JFfG5SutgB7WS6iXldXj53Wx2EAchhrfVO6wqyhJV1Q4COgVP7zEjEJcKGOOTF2lZFdzvmSrN1nGW5zxG3u9EoAtWLARIe4XPr1DEWMGzI/LoEUJy/oF/z+RjN5vp87ttykYF/HiqmsZHXFTdr9kFlmQICBrrSxPvSNwAgqqtt3THUfprRWlqUZn8fqvG97iMz/ZZzEjhUepVav5NaxVOf7zWb+oTpHiS9xCiIqoTb/hdeuWR9+8oZDFSwZ3PM5UqRVnAH6ErDYN19+f/WK+uGpCzpznbPG1MUxj8iKBDbUFQodH3A1EaoBlGnni/g2rAhcZ3GfsTLf4+FY3lnH/ezTBp3yY6E79LayXmfFvoZ4sgI=
+  on:
+    tags: true
+    repo: accept-nano/accept-nano-client
