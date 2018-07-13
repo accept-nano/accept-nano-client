@@ -4,6 +4,7 @@ node_js:
 - '9'
 deploy:
   provider: npm
+  skip_cleanup: true
   email: altay.aydemir@gmail.com
   api_key:
     secure: lZYL/rKdNpV81/HTjiHzrCaZ3332vScM91GLJZ5yZdkZAIdzL/pQg4uSlIbZTIX+ndDacuXOnfNQgVzlDZaAtn3yTFMnv9x8QD282RzuUc4tqco0AjGmaJgrC5DUfVFkzo/P91mryalYyFf31B8L2j6XnnMSu8OE/+AN9dqMVmE3BlDjePqm27LvAibFrreMFLRBKLo3wV15ufAPS14M3W+wJJiOj8odrHVzvPWNSBPNu9v6RYe1iGr/fg7V4VCKb/kUqPHoBCuv7li/T/73/zgPSLNAKaRfAX94ayW5myTJs9yoHFFtY1fbgT0vJHHRG6w7bO0/j5mTGIPduqGPmBf8Mq1+bBpLxOh4+L3Bnc7WXcqpV5iVzVcAYpTuuek8QwEO6SV9tc2H62WtZopCVJsHozmfyZKGGOdpDm3loxU5s369g2Zfk7Fy/roOIb5Y4pW1SjgI2z5NjxGmmzByi4WW7yMMESmzmmae/aXgIU/AAEhxgLreG7/RJOP35LlfYULgRzNB/zrXigzbj9WItHTkRUhpKIpAO9IYyYxRglOtQ4DCHcIorpDBrrz5pxR6au+aImjaLnY2Nagx4fpWrH3qJWtrMYVLNLoM+H7nsU61w7/Qa/EZrO398PrTCb1IPw8loJW2QVzKq/1QHW0aZXpVhdu9qw8/D+j4qhkJ13c=
