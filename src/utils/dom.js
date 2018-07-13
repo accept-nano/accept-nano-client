@@ -198,7 +198,7 @@ class DOM {
 
   showPaymentSucceededMessage(data) {
     const title = el('h2', { style: DOM.sharedStyles.titleHeader }, 'Thank you')
-    const message = el('p', `We've successfully received your payment.`)
+    const message = el('p', { style: DOM.sharedStyles.messageBody }, `We've successfully received your payment.`)
 
     const button = el('button', {
       style: `
@@ -216,7 +216,7 @@ class DOM {
 
   showPaymentFailureMessage(error) {
     const title = el('h2', { style: DOM.sharedStyles.titleHeader }, 'Oops!')
-    const message = el('p', `An error occurred: ${error}`)
+    const message = el('p', { style: DOM.sharedStyles.messageBody }, `An error occurred: ${error}`)
 
     const button = el('button', {
       style: `
@@ -259,6 +259,12 @@ DOM.sharedStyles = {
   titleHeader: `
     margin: 20px 0!important;
     font-size: 24px!important;
+    color: black!important;
+  `,
+  messageBody: `
+    color: black!important;
+    margin: initial!important;
+    padding: initial!important;
   `,
   infoHeader: `
     text-transform: uppercase!important;
