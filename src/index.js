@@ -4,6 +4,7 @@ import DOM from './utils/dom'
 class AcceptNano {
   constructor() {
     this.onClose = this.onClose.bind(this)
+    this.tick = this.tick.bind(this)
   }
 
   setup(options = {}) {
@@ -23,7 +24,19 @@ class AcceptNano {
     this.onFailure = null
     this.onCancel = null
 
+    clearInterval(this.interval)
+    this.remainingSeconds = 0
+
     return this
+  }
+
+  tick() {
+    this.remainingSeconds = this.remainingSeconds - 1
+    this.dom.updateTime(this.remainingSeconds)
+
+    if (this.remainingSeconds === 0) {
+      this.onClose()
+    }
   }
 
   startPayment({ data, onStart, onSuccess, onFailure, onCancel }) {
@@ -41,6 +54,8 @@ class AcceptNano {
     this.api.pay(data)
       .then(({ data }) => {
         this.state = AcceptNano.STATES.STARTED
+        this.remainingSeconds = data.remainingSeconds
+        this.interval = setInterval(this.tick, 1000)
 
         if (typeof this.onStart === 'function') {
           this.onStart(data)
@@ -78,6 +93,7 @@ class AcceptNano {
     this.log('Payment Succeeded', data)
     this.state = AcceptNano.STATES.SUCCEEDED
     this.dom.showPaymentSucceededMessage(data)
+    clearInterval(this.interval)
 
     if (typeof this.onSuccess === 'function') {
       this.onSuccess(data)
@@ -88,6 +104,7 @@ class AcceptNano {
     this.log('Payment Failed', error)
     this.state = AcceptNano.STATES.FAILED
     this.dom.showPaymentFailureMessage(error)
+    clearInterval(this.interval)
 
     if (typeof this.onFailure === 'function') {
       this.onFailure(error)
