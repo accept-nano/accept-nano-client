@@ -38,7 +38,7 @@ After you configure the acceptNano instance, you can initiate a payment session 
 window.acceptNano.startPayment({
     data: {
         amount: '10' // (String, required)
-        currency: 'USD' // S(tring, required, 'USD' or 'nano')
+        currency: 'USD' // (String, required, 'USD' or 'nano')
         state: '{userId:7}' // State to share between client and server, (String, non-required)
     },
     onStart: (paymentData) => {} // Function, fired when the payment session starts
