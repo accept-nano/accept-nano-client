@@ -1,4 +1,6 @@
 node_modules
 .cache
+.DS_Store
+example
 package-lock.json
 

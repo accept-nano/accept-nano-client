@@ -13,7 +13,7 @@ Payment gateway for [NANO](https://nano.org)
 <html>
     <head>
         ...
-        <script src="https://unpkg.com/@accept-nano/client" />
+        <script src="https://unpkg.com/@accept-nano/client"></script>
     </head>
     ...
 </html>
@@ -27,7 +27,7 @@ Before initiating the payment process, you **must** configure the *acceptNano* i
 ```JS
 window.acceptNano.setup({
     apiURL: 'api.myAcceptNanoServer.com', // URL of your Accept NANO server (String, required)
-    debug: false, // used for enabling debug mode, (Bool, non-required, false by default) 
+    debug: false, // used for enabling debug mode, (Bool, non-required, false by default)
     pollInterval: 1500, // time period (ms) to check for verification of the payment sessions (Number, non-required, 1500 by default)
 })
 ```
@@ -49,10 +49,8 @@ window.acceptNano.startPayment({
 ```
 
 ## Contributing
-
  - Please open an issue if you have a question or suggestion.
  - Don't create a PR before discussing it first.
 
 ## Who is using *accept-nano-client* in production?
-
  - [Put.io](https://put.io)

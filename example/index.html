@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/@accept-nano/client"></script>
+    <style>
+      body {
+        background: #f7f7f7;
+      }
+
+      main {
+        width: 360;
+        margin: 60px auto;
+        border: 1px solid #ddd;
+        padding: 20px;
+        background: white;
+      }
+
+      main label,
+      main input {
+        display: block;
+        width: 100%;
+      }
+
+      main label {
+        font-weight: bold;
+      }
+
+      main input {
+        margin-top: 5px;
+        margin-bottom: 20px;
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      main button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+<body>
+  <main>
+    <form id="paymentForm">
+
+      <label>URL</label>
+      <input type="text" name="apiURL" value="https://accept-nano.put.io/api" />
+
+      <label>Amount</label>
+      <input type="text" name="amount" value="0.000001" />
+
+      <label>Currency</label>
+      <input type="text" name="currency" value="nano" />
+
+      <label>State</label>
+      <input type="text" name="state" value="" />
+
+      <button type="submit">
+        Start
+      </button>
+    </form>
+  </main>
+
+  <script>
+    var form = document.getElementById('paymentForm')
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault()
+
+      window.acceptNano
+        .setup({
+          apiURL: form.apiURL.value,
+        })
+        .startPayment({
+          data: {
+            amount: form.amount.value,
+            currency: form.currency.value,
+            state: form.state.value,
+          },
+          onStart: (data) => console.log('CLIENT EVENT: started', data),
+          onSuccess: (data) => console.log('CLIENT EVENT: success', data),
+          onFailure: (error) => console.log('CLIENT EVENT: failure', error),
+          onCancel: () => console.log('CLIENT EVENT: cancelled'),
+        })
+    })
+  </script>
+</body>
+</html>
