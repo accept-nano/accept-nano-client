@@ -1,22 +1,33 @@
+<!DOCTYPE html>
 <html>
   <head>
     <script src="./index.js"></script>
     <style>
       body {
         background: #f7f7f7;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
       }
 
       main {
-        width: 360;
+        width: 360px;
         margin: 60px auto;
+      }
+
+      main h1 {
+        text-align: center;
+      }
+
+      main form {
         border: 1px solid #ddd;
         padding: 20px;
         background: white;
       }
 
       main label,
-      main input {
+      main input,
+      main select {
         display: block;
+        box-sizing: border-box;
         width: 100%;
       }
 
@@ -24,11 +35,18 @@
         font-weight: bold;
       }
 
-      main input {
+      main select {
+        height: 44px;
+      }
+
+      main input,
+      main select {
         margin-top: 5px;
         margin-bottom: 20px;
-        padding: 12px;
+        padding: 10px;
         font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
       }
 
       main button {
@@ -37,11 +55,19 @@
         padding: 12px;
         font-size: 14px;
         cursor: pointer;
+        background: #0B6CDC;
+        color: white;
+        text-transform: uppercase;
+        font-weight: bold;
       }
     </style>
   </head>
 <body>
   <main>
+    <h1>
+      Accept Nano Demo
+    </h1>
+
     <form id="paymentForm">
 
       <label>URL</label>
@@ -51,7 +77,10 @@
       <input type="text" name="amount" value="0.000001" />
 
       <label>Currency</label>
-      <input type="text" name="currency" value="nano" />
+      <select name="currency">
+        <option value="nano">nano</option>
+        <option value="usd">USD</option>
+      </select>
 
       <label>State</label>
       <input type="text" name="state" value="" />
@@ -69,19 +98,17 @@
       e.preventDefault()
 
       window.acceptNano
-        .setup({
-          apiURL: form.apiURL.value,
-        })
+        .setup({ apiURL: form.apiURL.value })
         .startPayment({
           data: {
             amount: form.amount.value,
             currency: form.currency.value,
             state: form.state.value,
           },
-          onStart: (data) => console.log('CLIENT EVENT: started', data),
-          onSuccess: (data) => console.log('CLIENT EVENT: success', data),
-          onFailure: (error) => console.log('CLIENT EVENT: failure', error),
-          onCancel: () => console.log('CLIENT EVENT: cancelled'),
+          onStart: function (data) { console.log('CLIENT EVENT: started', data) },
+          onSuccess: function (data) { console.log('CLIENT EVENT: success', data) },
+          onFailure: function (error) { console.log('CLIENT EVENT: failure', error) },
+          onCancel: function () {console.log('CLIENT EVENT: cancelled') }
         })
     })
   </script>
