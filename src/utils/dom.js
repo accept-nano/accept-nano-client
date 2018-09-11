@@ -16,8 +16,6 @@ class DOM {
         left: 0!important;
         width: 100%!important;
         height: 100%!important;
-        display: flex!important;
-        justify-content: center!important;
         z-index: 999999999999999!important;
         overflow: scroll!important;
       `
@@ -33,6 +31,9 @@ class DOM {
         text-align: center!important;
         border-radius: ${DOM.sharedStyles.mainBorderRadius}!important;
         box-shadow: 0 2px 32px 0 rgba(0, 0, 0, 0.85)!important;
+        top: 20%!important;
+        left: 50%!important;
+        transform: translate(-50%, -20%)!important;
       `
     })
 
@@ -68,9 +69,7 @@ class DOM {
       style: `
         background: ${DOM.colors.blue}!important;
         padding: 20px!important;
-        display: flex!important;
-        align-items: center!important;
-        justify-content: space-between!important;
+        height: 18px!important;
         border-top-left-radius:  ${DOM.sharedStyles.mainBorderRadius}!important;
         border-top-right-radius:  ${DOM.sharedStyles.mainBorderRadius}!important;
       `,
@@ -79,8 +78,9 @@ class DOM {
     const headerTitle = el('img', {
       src: 'https://nano.org/assets/img/logo-white.svg',
       style: `
-        max-width: 120px!important;
-        height: auto!important;
+        width: 120px!important;
+        height: 16px!important;
+        float: left!important;
       `
     })
 
@@ -94,6 +94,7 @@ class DOM {
         border: none!important;
         outline: none!important;
         cursor: pointer!important;
+        float: right!important;
       `,
       onclick: this.onClose,
     }, 'X')

@@ -1,3 +1,4 @@
+import '@babel/polyfill'
 import Api from './utils/api'
 import DOM from './utils/dom'
 

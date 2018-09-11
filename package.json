@@ -31,6 +31,7 @@
     "replace-in-file": "^3.4.2"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
     "axios": "^0.18.0",
     "qrcode": "^1.2.0",
     "redom": "^3.12.6",
