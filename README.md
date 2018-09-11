@@ -6,6 +6,8 @@ Payment gateway for [NANO](https://nano.org)
 
 *accept-nano-client* is a JavaScript library that helps you to communicate with [accept-nano](https://github.com/accept-nano/accept-nano) server for receiving NANO payments easily.
 
+Cross-browser compatibility is tested with [BrowserStack](https://browserstack.com), thanks to their sponsorship.
+
 ## Installing
 *accept-nano-client* is pushed to npm on each tagged build, so you can easily include it by inserting a script tag into your <HEAD> part of the HTML page, like this:
 
