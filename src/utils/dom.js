@@ -1,6 +1,9 @@
 import { el, setStyle, setChildren, mount, unmount } from 'redom'
 import { Spinner } from 'spin.js'
 import QRCode from 'qrcode'
+import Big from './big.mjs';
+
+const multNANO = Big('1000000000000000000000000000000');
 
 class DOM {
   constructor({ onClose }) {
@@ -169,7 +172,9 @@ class DOM {
   showPaymentInfo(data) {
     const { account, amount } = data
 
-    const qrText = `nano:${account}?amount=${amount}`
+    const amount_raw = Big(amount).times(multNANO).toFixed().toString()
+
+    const qrText = `nano:${account}?amount=${amount_raw}`
     const qrCanvas= el('canvas', {
       style: `
         background: white!important;
