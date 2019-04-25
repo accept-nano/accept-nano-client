@@ -169,7 +169,7 @@ class DOM {
   showPaymentInfo(data) {
     const { account, amount } = data
 
-    const qrText = `xrb:${account}?amount=${amount}`
+    const qrText = `nano:${account}?amount=${amount}`
     const qrCanvas= el('canvas', {
       style: `
         background: white!important;
