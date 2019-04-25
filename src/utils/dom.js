@@ -1,7 +1,7 @@
 import { el, setStyle, setChildren, mount, unmount } from 'redom'
 import { Spinner } from 'spin.js'
 import QRCode from 'qrcode'
-import Big from './big.mjs';
+import Big from 'big.js';
 
 const multNANO = Big('1000000000000000000000000000000');
 
