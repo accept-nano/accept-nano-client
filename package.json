@@ -33,6 +33,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "axios": "^0.18.0",
+    "big.js": "^5.2.2",
     "qrcode": "^1.2.0",
     "redom": "^3.12.6",
     "spin.js": "^4.0.0"
