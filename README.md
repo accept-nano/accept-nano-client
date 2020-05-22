@@ -56,3 +56,4 @@ window.acceptNano.startPayment({
 
 ## Who is using *accept-nano-client* in production?
  - [Put.io](https://put.io)
+ - [My Nano Ninja](https://mynano.ninja)
