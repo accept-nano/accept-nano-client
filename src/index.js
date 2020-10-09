@@ -52,7 +52,8 @@ class AcceptNano {
     this.onFailure = onFailure
     this.onCancel = onCancel
 
-    this.api.pay(data)
+    this.api
+      .pay(data)
       .then(({ data }) => {
         this.state = AcceptNano.STATES.STARTED
         this.remainingSeconds = data.remainingSeconds
@@ -75,14 +76,18 @@ class AcceptNano {
   verifyPayment(token) {
     this.log('Payment Verifying', { token })
 
-    this.api.verify(token)
+    this.api
+      .verify(token)
       .then(({ data }) => {
         if (data.merchantNotified) {
           return this.onPaymentSucceeded(data)
         }
 
         if (this.shouldVerify) {
-          return setTimeout(() => this.verifyPayment(token), this.options.pollInterval)
+          return setTimeout(
+            () => this.verifyPayment(token),
+            this.options.pollInterval,
+          )
         }
       })
       .catch((error) => {
@@ -150,4 +155,3 @@ AcceptNano.STATES = {
 }
 
 module.exports = new AcceptNano()
-

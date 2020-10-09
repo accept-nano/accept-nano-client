@@ -8,7 +8,8 @@
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
     "build:example": "cp src/index.html example/index.html && replace-in-file ./index.js https://unpkg.com/@accept-nano/client example/index.html",
-    "build": "parcel build src/index.js --global acceptNano --no-cache --out-file index.js"
+    "build": "parcel build src/index.js --global acceptNano --no-cache --out-file index.js",
+    "prettier": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,9 @@
   },
   "homepage": "https://github.com/accept-nano/accept-nano-client#readme",
   "devDependencies": {
+    "@putdotio/prettier-config": "^1.0.0",
     "parcel-bundler": "^1.9.4",
+    "prettier": "^2.1.2",
     "replace-in-file": "^3.4.2"
   },
   "dependencies": {
@@ -37,5 +40,6 @@
     "qrcode": "^1.2.0",
     "redom": "^3.12.6",
     "spin.js": "^4.0.0"
-  }
+  },
+  "prettier": "@putdotio/prettier-config"
 }
