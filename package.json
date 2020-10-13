@@ -52,5 +52,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "xstate": "^4.13.0"
   }
 }
