@@ -1,15 +1,10 @@
 import { Machine } from 'xstate'
+import { API } from './api'
 import {
   AcceptNanoPayment,
   AcceptNanoPaymentToken,
   CreateAcceptNanoPaymentParams,
 } from './types'
-
-type SessionConfig = {
-  apiURL: string
-  pollInterval: number
-  debug: boolean
-}
 
 type PaymentFailureReason =
   | { type: 'SYSTEM_ERROR'; error: Error }
@@ -33,21 +28,24 @@ type PaymentEvent =
   | { type: 'VERIFY_PAYMENT'; token: AcceptNanoPaymentToken }
   | { type: 'VERIFY_PAYMENT_SUCCESS'; payment: AcceptNanoPayment }
   | { type: 'VERIFY_PAYMENT_FAILURE'; reason: PaymentFailureReason }
+  | { type: 'CANCEL_PAYMENT' }
 
 interface PaymentContext {
   paymentToken: AcceptNanoPaymentToken | null
+  payment: AcceptNanoPayment | null
+  error: PaymentFailureReason | null
 }
 
-export const createSession = (config: SessionConfig) => {
-  const paymentMachine = Machine<
-    PaymentContext,
-    PaymentStateSchema,
-    PaymentEvent
-  >({
+export const createPaymentService = (api: API) => {
+  console.log(api)
+
+  return Machine<PaymentContext, PaymentStateSchema, PaymentEvent>({
     id: 'payment',
     initial: 'init',
     context: {
       paymentToken: null,
+      payment: null,
+      error: null,
     },
     states: {
       init: {
@@ -60,6 +58,7 @@ export const createSession = (config: SessionConfig) => {
         on: {
           CREATE_PAYMENT_SUCCESS: 'verification',
           CREATE_PAYMENT_FAILURE: 'error',
+          CANCEL_PAYMENT: 'error',
         },
       },
       verification: {
@@ -67,6 +66,7 @@ export const createSession = (config: SessionConfig) => {
           VERIFY_PAYMENT: 'verification',
           VERIFY_PAYMENT_SUCCESS: 'success',
           VERIFY_PAYMENT_FAILURE: 'error',
+          CANCEL_PAYMENT: 'error',
         },
       },
       success: {

@@ -54,6 +54,7 @@
     "access": "public"
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "xstate": "^4.13.0"
   }
 }

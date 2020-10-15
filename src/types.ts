@@ -8,7 +8,7 @@ export type AcceptNanoCurrency = 'NANO' | 'USD'
 export type CreateAcceptNanoPaymentParams = {
   amount: StringifiedNumber
   currency: AcceptNanoCurrency
-  state: StringifiedObject
+  state?: StringifiedObject
 }
 
 export interface AcceptNanoPayment {
