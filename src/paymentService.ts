@@ -9,8 +9,7 @@ import {
 } from './types'
 
 type PaymentFailureReason =
-  | { type: 'SYSTEM_ERROR'; error: unknown }
-  | { type: 'NETWORK_ERROR' }
+  | { type: 'NETWORK_ERROR'; error: unknown }
   | { type: 'USER_TERMINATED' }
 
 type PaymentContext = {
@@ -76,7 +75,7 @@ const setPaymentData = assign<
 })
 
 const setPaymentError = assign<PaymentContext, DoneInvokeEvent<AxiosError>>({
-  error: (_, event) => ({ type: 'SYSTEM_ERROR', error: event }),
+  error: (_, event) => ({ type: 'NETWORK_ERROR', error: event }),
 })
 
 export const createPaymentService = ({
@@ -116,9 +115,6 @@ export const createPaymentService = ({
             actions: setPaymentError,
           },
         },
-        on: {
-          CANCEL_PAYMENT: 'error',
-        },
       },
 
       fetching: {
@@ -135,9 +131,6 @@ export const createPaymentService = ({
             target: 'error',
             actions: setPaymentError,
           },
-        },
-        on: {
-          CANCEL_PAYMENT: 'error',
         },
       },
 
@@ -167,7 +160,6 @@ export const createPaymentService = ({
         on: {
           VERIFY_PAYMENT: 'verification',
           PAYMENT_VERIFIED: 'success',
-          CANCEL_PAYMENT: 'error',
         },
       },
 
@@ -177,6 +169,14 @@ export const createPaymentService = ({
 
       error: {
         type: 'final',
+      },
+    },
+    on: {
+      CANCEL_PAYMENT: {
+        target: 'error',
+        actions: assign<PaymentContext, CancelPaymentEvent>({
+          error: { type: 'USER_TERMINATED' },
+        }),
       },
     },
   })
