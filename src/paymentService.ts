@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios'
-import { Machine, assign, DoneInvokeEvent, send } from 'xstate'
+import { createMachine, assign, DoneInvokeEvent, Sender } from 'xstate'
 import { API } from './api'
+import { delay } from './utils'
 import {
   AcceptNanoPayment,
   AcceptNanoPaymentToken,
@@ -12,14 +13,9 @@ type PaymentFailureReason =
   | { type: 'NETWORK_ERROR' }
   | { type: 'USER_TERMINATED' }
 
-interface PaymentStateSchema {
-  states: {
-    init: {}
-    creation: {}
-    verification: {}
-    success: {}
-    error: {}
-  }
+type PaymentContext = {
+  payment?: AcceptNanoPayment
+  error?: PaymentFailureReason
 }
 
 type CreatePaymentEvent = {
@@ -27,12 +23,15 @@ type CreatePaymentEvent = {
   params: CreateAcceptNanoPaymentParams
 }
 
-type VerifyPaymentEvent = {
-  type: 'VERIFY_PAYMENT'
+type StartPaymentVerificationEvent = {
+  type: 'START_PAYMENT_VERIFICATION'
   token: AcceptNanoPaymentToken
 }
 
-// websocket
+type VerifyPaymentEvent = {
+  type: 'VERIFY_PAYMENT'
+}
+
 type PaymentVerifiedEvent = {
   type: 'PAYMENT_VERIFIED'
   payment: AcceptNanoPayment
@@ -44,32 +43,30 @@ type CancelPaymentEvent = {
 
 type PaymentEvent =
   | CreatePaymentEvent
+  | StartPaymentVerificationEvent
   | VerifyPaymentEvent
   | PaymentVerifiedEvent
   | CancelPaymentEvent
 
-interface PaymentContext {
-  payment: AcceptNanoPayment | null
-  error: PaymentFailureReason | null
-}
-
-const invokeCreatePayment = (api: API) => (
-  _context: PaymentContext,
-  event: PaymentEvent,
-) =>
-  api
-    .createPayment((event as CreatePaymentEvent).params)
-    .then(response => response.data)
-
-const invokeVerifyPayment = (api: API) => (
-  context: PaymentContext,
-  event: PaymentEvent,
-) =>
-  api
-    .verifyPayment(
-      context.payment?.token || (event as VerifyPaymentEvent).token,
-    )
-    .then(response => response.data)
+type PaymentState =
+  | {
+      value: 'idle'
+      context: PaymentContext & { payment: undefined; error: undefined }
+    }
+  | {
+      value: 'creation'
+      context: PaymentContext & { payment: undefined; error: undefined }
+    }
+  | {
+      value: 'fetching'
+      context: PaymentContext & { payment: undefined; error: undefined }
+    }
+  | {
+      value: 'verification'
+      context: PaymentContext & { error: undefined }
+    }
+  | { value: 'success'; context: PaymentContext & { error: undefined } }
+  | { value: 'error'; context: PaymentContext }
 
 const setPaymentData = assign<
   PaymentContext,
@@ -82,24 +79,34 @@ const setPaymentError = assign<PaymentContext, DoneInvokeEvent<AxiosError>>({
   error: (_, event) => ({ type: 'SYSTEM_ERROR', error: event }),
 })
 
-export const createPaymentService = (api: API) =>
-  Machine<PaymentContext, PaymentStateSchema, PaymentEvent>({
+export const createPaymentService = ({
+  api,
+  pollInterval,
+}: {
+  api: API
+  pollInterval: number
+}) =>
+  createMachine<PaymentContext, PaymentEvent, PaymentState>({
     id: 'payment',
-    initial: 'init',
+    initial: 'idle',
     context: {
-      payment: null,
-      error: null,
+      payment: undefined,
+      error: undefined,
     },
     states: {
-      init: {
+      idle: {
         on: {
           CREATE_PAYMENT: 'creation',
-          VERIFY_PAYMENT: 'verification',
+          START_PAYMENT_VERIFICATION: 'fetching',
         },
       },
+
       creation: {
         invoke: {
-          src: invokeCreatePayment(api),
+          src: (_context, event) =>
+            api
+              .createPayment((event as CreatePaymentEvent).params)
+              .then(response => response.data),
           onDone: {
             target: 'verification',
             actions: setPaymentData,
@@ -113,30 +120,16 @@ export const createPaymentService = (api: API) =>
           CANCEL_PAYMENT: 'error',
         },
       },
-      verification: {
-        invoke: {
-          src: invokeVerifyPayment(api),
-          onDone: {
-            actions: [
-              setPaymentData,
-              (_context, event: DoneInvokeEvent<AcceptNanoPayment>) => {
-                if (event.data.merchantNotified) {
-                  return send<PaymentContext, PaymentVerifiedEvent>({
-                    type: 'PAYMENT_VERIFIED',
-                    payment: event.data,
-                  })
-                }
 
-                return setTimeout(
-                  () =>
-                    send<PaymentContext, VerifyPaymentEvent>({
-                      type: 'VERIFY_PAYMENT',
-                      token: event.data.token,
-                    }),
-                  1500,
-                )
-              },
-            ],
+      fetching: {
+        invoke: {
+          src: (_context, event) =>
+            api
+              .fetchPayment((event as StartPaymentVerificationEvent).token)
+              .then(response => response.data),
+          onDone: {
+            target: 'verification',
+            actions: setPaymentData,
           },
           onError: {
             target: 'error',
@@ -144,15 +137,48 @@ export const createPaymentService = (api: API) =>
           },
         },
         on: {
+          CANCEL_PAYMENT: 'error',
+        },
+      },
+
+      verification: {
+        invoke: {
+          src: context => async (callback: Sender<PaymentEvent>) => {
+            await delay(pollInterval)
+
+            const { token } = context.payment as AcceptNanoPayment
+            const { data } = await api.fetchPayment(token)
+
+            if (data.merchantNotified) {
+              return callback({ type: 'PAYMENT_VERIFIED', payment: data })
+            }
+
+            return callback({ type: 'VERIFY_PAYMENT' })
+          },
+          onDone: {
+            target: 'success',
+            actions: setPaymentData,
+          },
+          onError: {
+            target: 'error',
+            actions: setPaymentError,
+          },
+        },
+        on: {
+          VERIFY_PAYMENT: 'verification',
           PAYMENT_VERIFIED: 'success',
           CANCEL_PAYMENT: 'error',
         },
       },
+
       success: {
         type: 'final',
       },
+
       error: {
         type: 'final',
       },
     },
   })
+
+export type PaymentService = ReturnType<typeof createPaymentService>

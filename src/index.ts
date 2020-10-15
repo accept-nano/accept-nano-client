@@ -6,26 +6,23 @@ import { AcceptNanoPaymentToken, CreateAcceptNanoPaymentParams } from './types'
 export type SessionConfig = {
   apiURL: string
   pollInterval: number
-  debug: boolean
 }
 
-export const createSession = (config: SessionConfig) => {
-  const api = createAPI({ baseURL: config.apiURL })
+export const createSession = ({ apiURL, pollInterval }: SessionConfig) => {
+  const api = createAPI({ baseURL: apiURL })
 
-  const paymentService = interpret(createPaymentService(api))
+  const paymentService = interpret(createPaymentService({ api, pollInterval }))
     .onTransition(state => {
-      if (config.debug) {
-        console.log(state.value)
-      }
+      console.log(state.value)
     })
     .start()
 
   return {
     createPayment: (params: CreateAcceptNanoPaymentParams) => {
-      paymentService.send('CREATE_PAYMENT', { params })
+      paymentService.send({ type: 'CREATE_PAYMENT', params })
     },
     verifyPayment: (token: AcceptNanoPaymentToken) => {
-      paymentService.send('VERIFY_PAYMENT', { token })
+      paymentService.send({ type: 'START_PAYMENT_VERIFICATION', token })
     },
   }
 }
