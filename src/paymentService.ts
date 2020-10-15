@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { Machine, assign, DoneInvokeEvent } from 'xstate'
 import { API } from './api'
 import {
@@ -7,7 +8,7 @@ import {
 } from './types'
 
 type PaymentFailureReason =
-  | { type: 'SYSTEM_ERROR'; error: Error }
+  | { type: 'SYSTEM_ERROR'; error: unknown }
   | { type: 'NETWORK_ERROR' }
   | { type: 'USER_TERMINATED' }
 
@@ -26,29 +27,78 @@ type CreatePaymentEvent = {
   params: CreateAcceptNanoPaymentParams
 }
 
+type VerifyPaymentEvent = {
+  type: 'VERIFY_PAYMENT'
+  token: AcceptNanoPaymentToken
+}
+
+// websocket
+type PaymentVerifiedEvent = {
+  type: 'PAYMENT_VERIFIED'
+  payment: AcceptNanoPayment
+}
+
+type CancelPaymentEvent = {
+  type: 'CANCEL_PAYMENT'
+}
+
 type PaymentEvent =
   | CreatePaymentEvent
-  | { type: 'CREATE_PAYMENT_SUCCESS'; payment: AcceptNanoPayment }
-  | { type: 'CREATE_PAYMENT_FAILURE'; reason: PaymentFailureReason }
-  | { type: 'VERIFY_PAYMENT'; token: AcceptNanoPaymentToken }
-  | { type: 'VERIFY_PAYMENT_SUCCESS'; payment: AcceptNanoPayment }
-  | { type: 'VERIFY_PAYMENT_FAILURE'; reason: PaymentFailureReason }
-  | { type: 'CANCEL_PAYMENT' }
+  | VerifyPaymentEvent
+  | PaymentVerifiedEvent
+  | CancelPaymentEvent
 
 interface PaymentContext {
-  paymentToken: AcceptNanoPaymentToken | null
   payment: AcceptNanoPayment | null
   error: PaymentFailureReason | null
 }
 
-export const createPaymentService = (api: API) => {
-  console.log(api)
+const invokeCreatePayment = (api: API) => (
+  _context: PaymentContext,
+  event: PaymentEvent,
+) =>
+  api
+    .createPayment((event as CreatePaymentEvent).params)
+    .then(response => response.data)
 
-  return Machine<PaymentContext, PaymentStateSchema, PaymentEvent>({
+const invokeVerifyPayment = (api: API) => (
+  context: PaymentContext,
+  event: PaymentEvent,
+) =>
+  new Promise((resolve, reject) => {
+    const token = context.payment?.token || (event as VerifyPaymentEvent).token
+
+    const pollVerifyPayment = () =>
+      api
+        .verifyPayment(token)
+        .then(response => {
+          if (response.data.merchantNotified) {
+            return resolve()
+          }
+
+          setTimeout(pollVerifyPayment, 1500)
+        })
+        .catch(error => reject(error))
+
+    pollVerifyPayment()
+  })
+
+const setPaymentData = assign<
+  PaymentContext,
+  DoneInvokeEvent<AcceptNanoPayment>
+>({
+  payment: (_, event) => event.data,
+})
+
+const setPaymentError = assign<PaymentContext, DoneInvokeEvent<AxiosError>>({
+  error: (_, event) => ({ type: 'SYSTEM_ERROR', error: event }),
+})
+
+export const createPaymentService = (api: API) =>
+  Machine<PaymentContext, PaymentStateSchema, PaymentEvent>({
     id: 'payment',
     initial: 'init',
     context: {
-      paymentToken: null,
       payment: null,
       error: null,
     },
@@ -61,19 +111,14 @@ export const createPaymentService = (api: API) => {
       },
       creation: {
         invoke: {
-          id: 'create-payment',
-          src: (_context, event) =>
-            api
-              .createPayment((event as CreatePaymentEvent).params)
-              .then(response => response.data),
+          src: invokeCreatePayment(api),
           onDone: {
             target: 'verification',
-            actions: assign<PaymentContext, DoneInvokeEvent<AcceptNanoPayment>>(
-              { payment: (_, event) => event.data },
-            ),
+            actions: setPaymentData,
           },
           onError: {
             target: 'error',
+            actions: setPaymentError,
           },
         },
         on: {
@@ -81,10 +126,19 @@ export const createPaymentService = (api: API) => {
         },
       },
       verification: {
+        invoke: {
+          src: invokeVerifyPayment(api),
+          onDone: {
+            target: 'success',
+            actions: setPaymentData,
+          },
+          onError: {
+            target: 'error',
+            actions: setPaymentError,
+          },
+        },
         on: {
-          VERIFY_PAYMENT: 'verification',
-          VERIFY_PAYMENT_SUCCESS: 'success',
-          VERIFY_PAYMENT_FAILURE: 'error',
+          PAYMENT_VERIFIED: 'success',
           CANCEL_PAYMENT: 'error',
         },
       },
@@ -96,4 +150,3 @@ export const createPaymentService = (api: API) => {
       },
     },
   })
-}
