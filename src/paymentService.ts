@@ -1,4 +1,4 @@
-import { Machine } from 'xstate'
+import { Machine, assign, DoneInvokeEvent } from 'xstate'
 import { API } from './api'
 import {
   AcceptNanoPayment,
@@ -21,8 +21,13 @@ interface PaymentStateSchema {
   }
 }
 
+type CreatePaymentEvent = {
+  type: 'CREATE_PAYMENT'
+  params: CreateAcceptNanoPaymentParams
+}
+
 type PaymentEvent =
-  | { type: 'CREATE_PAYMENT'; params: CreateAcceptNanoPaymentParams }
+  | CreatePaymentEvent
   | { type: 'CREATE_PAYMENT_SUCCESS'; payment: AcceptNanoPayment }
   | { type: 'CREATE_PAYMENT_FAILURE'; reason: PaymentFailureReason }
   | { type: 'VERIFY_PAYMENT'; token: AcceptNanoPaymentToken }
@@ -55,9 +60,23 @@ export const createPaymentService = (api: API) => {
         },
       },
       creation: {
+        invoke: {
+          id: 'create-payment',
+          src: (_context, event) =>
+            api
+              .createPayment((event as CreatePaymentEvent).params)
+              .then(response => response.data),
+          onDone: {
+            target: 'verification',
+            actions: assign<PaymentContext, DoneInvokeEvent<AcceptNanoPayment>>(
+              { payment: (_, event) => event.data },
+            ),
+          },
+          onError: {
+            target: 'error',
+          },
+        },
         on: {
-          CREATE_PAYMENT_SUCCESS: 'verification',
-          CREATE_PAYMENT_FAILURE: 'error',
           CANCEL_PAYMENT: 'error',
         },
       },
