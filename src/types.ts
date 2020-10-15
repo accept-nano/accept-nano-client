@@ -22,5 +22,5 @@ export interface AcceptNanoPayment {
   remainingSeconds: number
   state: StringifiedObject
   fulfilled: boolean
-  merchantNotified: false
+  merchantNotified: boolean
 }

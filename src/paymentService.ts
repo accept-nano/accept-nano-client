@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { Machine, assign, DoneInvokeEvent } from 'xstate'
+import { Machine, assign, DoneInvokeEvent, send } from 'xstate'
 import { API } from './api'
 import {
   AcceptNanoPayment,
@@ -65,23 +65,11 @@ const invokeVerifyPayment = (api: API) => (
   context: PaymentContext,
   event: PaymentEvent,
 ) =>
-  new Promise((resolve, reject) => {
-    const token = context.payment?.token || (event as VerifyPaymentEvent).token
-
-    const pollVerifyPayment = () =>
-      api
-        .verifyPayment(token)
-        .then(response => {
-          if (response.data.merchantNotified) {
-            return resolve()
-          }
-
-          setTimeout(pollVerifyPayment, 1500)
-        })
-        .catch(error => reject(error))
-
-    pollVerifyPayment()
-  })
+  api
+    .verifyPayment(
+      context.payment?.token || (event as VerifyPaymentEvent).token,
+    )
+    .then(response => response.data)
 
 const setPaymentData = assign<
   PaymentContext,
@@ -129,8 +117,26 @@ export const createPaymentService = (api: API) =>
         invoke: {
           src: invokeVerifyPayment(api),
           onDone: {
-            target: 'success',
-            actions: setPaymentData,
+            actions: [
+              setPaymentData,
+              (_context, event: DoneInvokeEvent<AcceptNanoPayment>) => {
+                if (event.data.merchantNotified) {
+                  return send<PaymentContext, PaymentVerifiedEvent>({
+                    type: 'PAYMENT_VERIFIED',
+                    payment: event.data,
+                  })
+                }
+
+                return setTimeout(
+                  () =>
+                    send<PaymentContext, VerifyPaymentEvent>({
+                      type: 'VERIFY_PAYMENT',
+                      token: event.data.token,
+                    }),
+                  1500,
+                )
+              },
+            ],
           },
           onError: {
             target: 'error',
