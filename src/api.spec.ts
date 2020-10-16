@@ -1,16 +1,16 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import { createAPI } from './api'
-import { mockAcceptNanoPayment, mockBaseURL } from './test-utils'
+import { mockAcceptNanoPayment, mockAPIURL } from './test-utils'
 
 describe('api', () => {
   const mock = new MockAdapter(axios)
-  const api = createAPI({ baseURL: mockBaseURL })
+  const api = createAPI({ baseURL: mockAPIURL })
 
   afterEach(mock.reset)
 
   it('creates the payment with correctly constructed request', async () => {
-    mock.onPost(`${mockBaseURL}/pay`).reply(200, mockAcceptNanoPayment)
+    mock.onPost(`${mockAPIURL}/pay`).reply(200, mockAcceptNanoPayment)
 
     const response = await api.createPayment({
       amount: '0.1',
@@ -66,7 +66,7 @@ describe('api', () => {
 
   it('fetches the payment info with correctly constructed request', async () => {
     mock
-      .onGet(`${mockBaseURL}/verify`, {
+      .onGet(`${mockAPIURL}/verify`, {
         params: { token: mockAcceptNanoPayment.token },
       })
       .reply(200, mockAcceptNanoPayment)
