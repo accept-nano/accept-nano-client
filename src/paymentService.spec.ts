@@ -147,4 +147,29 @@ describe('paymentService', () => {
       params: { amount: '0.1', currency: 'USD' },
     })
   })
+
+  it('cancels ongoing flow if payment session is expired', done => {
+    mockFetchPayment.mockResolvedValueOnce(
+      createMockAPIResponseWithPayment({
+        ...mockAcceptNanoPayment,
+        remainingSeconds: 0,
+      }),
+    )
+
+    const paymentService = interpret(
+      createPaymentService({ api: mockAPI, pollInterval: 100 }),
+    )
+      .onTransition(state => {
+        if (state.matches('error')) {
+          expect(state.context.error?.type).toBe('SESSION_EXPIRED')
+          done()
+        }
+      })
+      .start()
+
+    paymentService.send({
+      type: 'CREATE_PAYMENT',
+      params: { amount: '0.1', currency: 'USD' },
+    })
+  })
 })

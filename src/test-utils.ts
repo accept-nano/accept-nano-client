@@ -1,5 +1,7 @@
 import { AcceptNanoPayment } from './types'
 
+export const mockBaseURL = 'https://accept-nano-demo.put.io/api'
+
 export const mockAcceptNanoPayment: AcceptNanoPayment = {
   token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
   account: 'nano_3c9pkkgdy5n8qkkrzj96ncjnpcbuj6ux3177wawn1wu5ynoejquumbffdxny',
@@ -18,7 +20,7 @@ export const createMockAPIResponseWithPayment = (
   payment = mockAcceptNanoPayment,
 ) => ({
   status: 200,
-  statusText: '',
+  statusText: 'OK',
   headers: {},
   config: {},
   data: payment,

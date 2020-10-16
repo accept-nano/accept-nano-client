@@ -10,6 +10,7 @@ import {
 
 type PaymentFailureReason =
   | { type: 'NETWORK_ERROR'; error: unknown }
+  | { type: 'SESSION_EXPIRED' }
   | { type: 'USER_TERMINATED' }
 
 type PaymentContext = {
@@ -36,6 +37,10 @@ type PaymentVerifiedEvent = {
   payment: AcceptNanoPayment
 }
 
+type PaymentSessionExpiredEvent = {
+  type: 'PAYMENT_SESSION_EXPIRED'
+}
+
 type CancelPaymentEvent = {
   type: 'CANCEL_PAYMENT'
 }
@@ -45,6 +50,7 @@ type PaymentEvent =
   | StartPaymentVerificationEvent
   | VerifyPaymentEvent
   | PaymentVerifiedEvent
+  | PaymentSessionExpiredEvent
   | CancelPaymentEvent
 
 type PaymentState =
@@ -67,25 +73,32 @@ type PaymentState =
   | { value: 'success'; context: PaymentContext & { error: undefined } }
   | { value: 'error'; context: PaymentContext }
 
-const setPaymentData = assign<
-  PaymentContext,
-  DoneInvokeEvent<AcceptNanoPayment>
->({
-  payment: (_, event) => event.data,
-})
-
-const setPaymentError = assign<PaymentContext, DoneInvokeEvent<AxiosError>>({
-  error: (_, event) => ({ type: 'NETWORK_ERROR', error: event }),
-})
-
 export const createPaymentService = ({
   api,
   pollInterval,
 }: {
   api: API
   pollInterval: number
-}) =>
-  createMachine<PaymentContext, PaymentEvent, PaymentState>({
+}) => {
+  const setPaymentData = assign<
+    PaymentContext,
+    DoneInvokeEvent<AcceptNanoPayment>
+  >({
+    payment: (_, event) => event.data,
+  })
+
+  const setPaymentError = assign<PaymentContext, DoneInvokeEvent<AxiosError>>({
+    error: (_, event) => ({ type: 'NETWORK_ERROR', error: event }),
+  })
+
+  const sharedCancelPaymentHandler = {
+    target: 'error',
+    actions: assign<PaymentContext, CancelPaymentEvent>({
+      error: { type: 'USER_TERMINATED' },
+    }),
+  }
+
+  return createMachine<PaymentContext, PaymentEvent, PaymentState>({
     id: 'payment',
     initial: 'idle',
     context: {
@@ -115,6 +128,9 @@ export const createPaymentService = ({
             actions: setPaymentError,
           },
         },
+        on: {
+          CANCEL_PAYMENT: sharedCancelPaymentHandler,
+        },
       },
 
       fetching: {
@@ -132,6 +148,9 @@ export const createPaymentService = ({
             actions: setPaymentError,
           },
         },
+        on: {
+          CANCEL_PAYMENT: sharedCancelPaymentHandler,
+        },
       },
 
       verification: {
@@ -144,6 +163,10 @@ export const createPaymentService = ({
 
             if (data.merchantNotified) {
               return callback({ type: 'PAYMENT_VERIFIED', payment: data })
+            }
+
+            if (data.remainingSeconds === 0) {
+              return callback({ type: 'PAYMENT_SESSION_EXPIRED' })
             }
 
             return callback({ type: 'VERIFY_PAYMENT' })
@@ -160,6 +183,13 @@ export const createPaymentService = ({
         on: {
           VERIFY_PAYMENT: 'verification',
           PAYMENT_VERIFIED: 'success',
+          PAYMENT_SESSION_EXPIRED: {
+            target: 'error',
+            actions: assign<PaymentContext, PaymentSessionExpiredEvent>({
+              error: { type: 'SESSION_EXPIRED' },
+            }),
+          },
+          CANCEL_PAYMENT: sharedCancelPaymentHandler,
         },
       },
 
@@ -171,14 +201,7 @@ export const createPaymentService = ({
         type: 'final',
       },
     },
-    on: {
-      CANCEL_PAYMENT: {
-        target: 'error',
-        actions: assign<PaymentContext, CancelPaymentEvent>({
-          error: { type: 'USER_TERMINATED' },
-        }),
-      },
-    },
   })
+}
 
 export type PaymentService = ReturnType<typeof createPaymentService>
