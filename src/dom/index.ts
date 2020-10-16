@@ -1,6 +1,6 @@
 import { el, setChildren, mount, unmount, setStyle } from 'redom'
-import eventEmitter from 'event-emitter'
-import { AcceptNanoPayment, PaymentFailureReason } from '../types'
+import { EventEmitter } from '@byungi/event-emitter'
+import { AcceptNanoPayment, AcceptNanoPaymentFailureReason } from '../types'
 import {
   containerStyle,
   bodyStyle,
@@ -15,13 +15,17 @@ import { createLoading } from './loading'
 import { createPayment } from './payment'
 import { formatSeconds } from '../utils'
 
+type Events = {
+  close: () => void
+}
+
 export const createDOM = () => {
-  const { on, once, emit } = eventEmitter()
-  const handleClose = () => emit('CLOSE')
+  const eventEmitter = new EventEmitter<Events>()
+  const handleCloseButtonClick = () => eventEmitter.emit('close')
 
   const container = el('div', { id: 'accept-nano', style: containerStyle })
   const main = el('div', { id: 'accept-nano-body', style: bodyStyle })
-  const header = createHeader({ onClose: handleClose })
+  const header = createHeader({ onClose: handleCloseButtonClick })
   const statusBar = el('div', { style: statusBarStyle }, 'Starting...')
   const content = el('div', { style: contentStyle })
   const footer = createFooter()
@@ -44,8 +48,8 @@ export const createDOM = () => {
   }
 
   return {
-    on,
-    once,
+    on: eventEmitter.on.bind(eventEmitter),
+    once: eventEmitter.once.bind(eventEmitter),
 
     mount: () => mount(document.body, container),
     unmount: () => {
@@ -84,7 +88,7 @@ export const createDOM = () => {
           ${sharedStyles.actionButton}
           background: ${colors.green}!important;
         `,
-          onclick: handleClose,
+          onclick: handleCloseButtonClick,
         },
         'Done',
       )
@@ -96,7 +100,7 @@ export const createDOM = () => {
       setChildren(container, [main])
     },
 
-    renderFailure: (reason: PaymentFailureReason) => {
+    renderFailure: (reason: AcceptNanoPaymentFailureReason) => {
       // @TODO: centralise
       clearCountdownInterval()
 
@@ -113,7 +117,7 @@ export const createDOM = () => {
           ${sharedStyles.actionButton}
           background: ${colors.red}!important;
         `,
-          onclick: handleClose,
+          onclick: handleCloseButtonClick,
         },
         'Close',
       )

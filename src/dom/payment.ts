@@ -1,10 +1,10 @@
 import { el } from 'redom'
-import BigNumber from 'big.js'
+import Big from 'big.js'
 import QRCode from 'qrcode'
 import { AcceptNanoPayment } from '../types'
 import { sharedStyles } from './styles'
 
-const multNANO = BigNumber('1000000000000000000000000000000')
+const multNANO = Big('1000000000000000000000000000000')
 
 const createAccountElements = (account: AcceptNanoPayment['account']) => {
   const accountHeader = el(
@@ -38,11 +38,11 @@ const createQRCodeElements = (payment: AcceptNanoPayment) => {
 
   const qrCanvas = el('canvas', {
     style: `
-    background: white!important;
-    padding: 24px!important;
-    border: 1px solid #e9e9e9!important;
-    border-radius: 5px!important;
-  `,
+      background: white!important;
+      padding: 24px!important;
+      border: 1px solid #e9e9e9!important;
+      border-radius: 5px!important;
+    `,
   })
 
   return [qrText, qrCanvas] as const

@@ -25,7 +25,7 @@ export interface AcceptNanoPayment {
   merchantNotified: boolean
 }
 
-export type PaymentFailureReason =
+export type AcceptNanoPaymentFailureReason =
   | { type: 'NETWORK_ERROR'; error: unknown }
   | { type: 'SESSION_EXPIRED' }
   | { type: 'USER_TERMINATED' }

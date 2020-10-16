@@ -11,13 +11,13 @@ import { delay } from './utils'
 import {
   AcceptNanoPayment,
   AcceptNanoPaymentToken,
+  AcceptNanoPaymentFailureReason,
   CreateAcceptNanoPaymentParams,
-  PaymentFailureReason,
 } from './types'
 
 type PaymentContext = {
   payment?: AcceptNanoPayment
-  error?: PaymentFailureReason
+  error?: AcceptNanoPaymentFailureReason
 }
 
 type CreatePaymentEvent = {
@@ -78,7 +78,7 @@ type PaymentState =
     }
   | {
       value: 'error'
-      context: PaymentContext & { error: PaymentFailureReason }
+      context: PaymentContext & { error: AcceptNanoPaymentFailureReason }
     }
 
 export const createPaymentService = ({
@@ -194,7 +194,12 @@ export const createPaymentService = ({
         },
         on: {
           VERIFY_PAYMENT: 'verification',
-          PAYMENT_VERIFIED: 'success',
+          PAYMENT_VERIFIED: {
+            target: 'success',
+            actions: assign<PaymentContext, PaymentVerifiedEvent>({
+              payment: (_, event) => event.payment,
+            }),
+          },
           PAYMENT_SESSION_EXPIRED: {
             target: 'error',
             actions: assign<PaymentContext, PaymentSessionExpiredEvent>({
