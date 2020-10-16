@@ -33,11 +33,11 @@
   "size-limit": [
     {
       "path": "dist/client.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "60 KB"
     },
     {
       "path": "dist/client.esm.js",
-      "limit": "10 KB"
+      "limit": "60 KB"
     }
   ],
   "devDependencies": {
