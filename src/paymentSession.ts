@@ -17,22 +17,28 @@ export const createPaymentSession = ({
   const paymentService = createPaymentService({ api, pollInterval })
     .onTransition(state => {
       if (state.matches('idle')) {
-        return dom.renderLoading()
+        dom.mount()
+        dom.renderLoading()
       }
 
       if (state.matches('verification')) {
-        return dom.renderPayment(state.context.payment)
+        dom.renderPayment(state.context.payment)
       }
 
       if (state.matches('success')) {
-        return dom.renderSuccess()
+        dom.renderSuccess()
       }
 
       if (state.matches('error')) {
-        return dom.renderFailure(state.context.error)
+        dom.renderFailure(state.context.error)
       }
     })
     .start()
+
+  dom.once('CLOSE', () => {
+    paymentService.send({ type: 'TERMINATE' })
+    dom.unmount()
+  })
 
   return {
     createPayment: (params: CreateAcceptNanoPaymentParams) => {

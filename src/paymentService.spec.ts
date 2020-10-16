@@ -127,16 +127,14 @@ describe('paymentService', () => {
     })
   })
 
-  it('cancels ongoing flow if CANCEL_PAYMENT action has been sent', done => {
+  it('cancels ongoing flow if TERMINATE action has been sent', done => {
     const paymentService = createPaymentService({
       api: mockAPI,
       pollInterval: 100,
     })
       .onTransition(state => {
         if (state.matches('creation')) {
-          paymentService.send({
-            type: 'CANCEL_PAYMENT',
-          })
+          paymentService.send({ type: 'TERMINATE' })
         }
 
         if (state.matches('error')) {

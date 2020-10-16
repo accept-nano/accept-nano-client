@@ -43,8 +43,8 @@ type PaymentSessionExpiredEvent = {
   type: 'PAYMENT_SESSION_EXPIRED'
 }
 
-type CancelPaymentEvent = {
-  type: 'CANCEL_PAYMENT'
+type TerminatePaymentEvent = {
+  type: 'TERMINATE'
 }
 
 type PaymentEvent =
@@ -53,7 +53,7 @@ type PaymentEvent =
   | VerifyPaymentEvent
   | PaymentVerifiedEvent
   | PaymentSessionExpiredEvent
-  | CancelPaymentEvent
+  | TerminatePaymentEvent
 
 type PaymentState =
   | {
@@ -99,9 +99,9 @@ export const createPaymentService = ({
     error: (_, event) => ({ type: 'NETWORK_ERROR', error: event }),
   })
 
-  const sharedCancelPaymentHandler = {
+  const sharedTerminateHandler = {
     target: 'error',
-    actions: assign<PaymentContext, CancelPaymentEvent>({
+    actions: assign<PaymentContext, TerminatePaymentEvent>({
       error: { type: 'USER_TERMINATED' },
     }),
   }
@@ -141,7 +141,7 @@ export const createPaymentService = ({
           },
         },
         on: {
-          CANCEL_PAYMENT: sharedCancelPaymentHandler,
+          TERMINATE: sharedTerminateHandler,
         },
       },
 
@@ -161,7 +161,7 @@ export const createPaymentService = ({
           },
         },
         on: {
-          CANCEL_PAYMENT: sharedCancelPaymentHandler,
+          TERMINATE: sharedTerminateHandler,
         },
       },
 
@@ -201,7 +201,7 @@ export const createPaymentService = ({
               error: { type: 'SESSION_EXPIRED' },
             }),
           },
-          CANCEL_PAYMENT: sharedCancelPaymentHandler,
+          TERMINATE: sharedTerminateHandler,
         },
       },
 
