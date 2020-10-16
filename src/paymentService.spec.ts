@@ -1,4 +1,3 @@
-import { interpret } from 'xstate'
 import { createPaymentService } from './paymentService'
 import { API } from './api'
 import {
@@ -26,9 +25,10 @@ describe('paymentService', () => {
         }),
       )
 
-      const paymentService = interpret(
-        createPaymentService({ api: mockAPI, pollInterval: 100 }),
-      )
+      const paymentService = createPaymentService({
+        api: mockAPI,
+        pollInterval: 100,
+      })
         .onTransition(state => {
           if (state.matches('verification')) {
             expect(mockAPI.createPayment).toBeCalledTimes(1)
@@ -50,9 +50,10 @@ describe('paymentService', () => {
     it('transitions to error state if payment creation fails', done => {
       mockCreatePayment.mockRejectedValueOnce(new Error('Network Error!'))
 
-      const paymentService = interpret(
-        createPaymentService({ api: mockAPI, pollInterval: 100 }),
-      )
+      const paymentService = createPaymentService({
+        api: mockAPI,
+        pollInterval: 100,
+      })
         .onTransition(state => {
           if (state.matches('error')) {
             expect(mockAPI.createPayment).toBeCalledTimes(1)
@@ -71,9 +72,10 @@ describe('paymentService', () => {
 
   describe('verify payment flow', () => {
     it('starts verifying a payment through API and transitions to success state', done => {
-      const paymentService = interpret(
-        createPaymentService({ api: mockAPI, pollInterval: 100 }),
-      )
+      const paymentService = createPaymentService({
+        api: mockAPI,
+        pollInterval: 100,
+      })
         .onTransition(state => {
           if (
             state.matches('verification') &&
@@ -101,9 +103,10 @@ describe('paymentService', () => {
     })
 
     it('starts verifying a payment through API and transitions to failure state', done => {
-      const paymentService = interpret(
-        createPaymentService({ api: mockAPI, pollInterval: 100 }),
-      )
+      const paymentService = createPaymentService({
+        api: mockAPI,
+        pollInterval: 100,
+      })
         .onTransition(state => {
           if (state.matches('verification')) {
             mockFetchPayment.mockRejectedValueOnce(new Error('Network Error!'))
@@ -125,9 +128,10 @@ describe('paymentService', () => {
   })
 
   it('cancels ongoing flow if CANCEL_PAYMENT action has been sent', done => {
-    const paymentService = interpret(
-      createPaymentService({ api: mockAPI, pollInterval: 100 }),
-    )
+    const paymentService = createPaymentService({
+      api: mockAPI,
+      pollInterval: 100,
+    })
       .onTransition(state => {
         if (state.matches('creation')) {
           paymentService.send({
@@ -156,9 +160,10 @@ describe('paymentService', () => {
       }),
     )
 
-    const paymentService = interpret(
-      createPaymentService({ api: mockAPI, pollInterval: 100 }),
-    )
+    const paymentService = createPaymentService({
+      api: mockAPI,
+      pollInterval: 100,
+    })
       .onTransition(state => {
         if (state.matches('error')) {
           expect(state.context.error?.type).toBe('SESSION_EXPIRED')

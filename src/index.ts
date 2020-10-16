@@ -1,7 +1,7 @@
-import { interpret } from 'xstate'
-import { createAPI } from './api'
-import { createPaymentService } from './paymentService'
 import { AcceptNanoPaymentToken, CreateAcceptNanoPaymentParams } from './types'
+import { createAPI } from './api'
+import { createDOM } from './dom'
+import { createPaymentService } from './paymentService'
 
 export type SessionConfig = {
   apiURL: string
@@ -10,10 +10,24 @@ export type SessionConfig = {
 
 export const createSession = ({ apiURL, pollInterval }: SessionConfig) => {
   const api = createAPI({ baseURL: apiURL })
-
-  const paymentService = interpret(createPaymentService({ api, pollInterval }))
+  const dom = createDOM()
+  const paymentService = createPaymentService({ api, pollInterval })
     .onTransition(state => {
-      console.log(state.value)
+      if (state.matches('idle')) {
+        return dom.renderLoading()
+      }
+
+      if (state.matches('verification')) {
+        return dom.renderPayment(state.context.payment)
+      }
+
+      if (state.matches('success')) {
+        return dom.renderSuccess()
+      }
+
+      if (state.matches('error')) {
+        return dom.renderFailure(state.context.error)
+      }
     })
     .start()
 

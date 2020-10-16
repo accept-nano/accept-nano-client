@@ -1,17 +1,19 @@
 import { AxiosError } from 'axios'
-import { createMachine, assign, DoneInvokeEvent, Sender } from 'xstate'
+import {
+  interpret,
+  createMachine,
+  assign,
+  DoneInvokeEvent,
+  Sender,
+} from 'xstate'
 import { API } from './api'
 import { delay } from './utils'
 import {
   AcceptNanoPayment,
   AcceptNanoPaymentToken,
   CreateAcceptNanoPaymentParams,
+  PaymentFailureReason,
 } from './types'
-
-type PaymentFailureReason =
-  | { type: 'NETWORK_ERROR'; error: unknown }
-  | { type: 'SESSION_EXPIRED' }
-  | { type: 'USER_TERMINATED' }
 
 type PaymentContext = {
   payment?: AcceptNanoPayment
@@ -68,10 +70,16 @@ type PaymentState =
     }
   | {
       value: 'verification'
-      context: PaymentContext & { error: undefined }
+      context: PaymentContext & { payment: AcceptNanoPayment; error: undefined }
     }
-  | { value: 'success'; context: PaymentContext & { error: undefined } }
-  | { value: 'error'; context: PaymentContext }
+  | {
+      value: 'success'
+      context: PaymentContext & { payment: AcceptNanoPayment; error: undefined }
+    }
+  | {
+      value: 'error'
+      context: PaymentContext & { error: PaymentFailureReason }
+    }
 
 export const createPaymentService = ({
   api,
@@ -98,7 +106,11 @@ export const createPaymentService = ({
     }),
   }
 
-  return createMachine<PaymentContext, PaymentEvent, PaymentState>({
+  const paymentMachine = createMachine<
+    PaymentContext,
+    PaymentEvent,
+    PaymentState
+  >({
     id: 'payment',
     initial: 'idle',
     context: {
@@ -202,6 +214,8 @@ export const createPaymentService = ({
       },
     },
   })
+
+  return interpret(paymentMachine)
 }
 
 export type PaymentService = ReturnType<typeof createPaymentService>
