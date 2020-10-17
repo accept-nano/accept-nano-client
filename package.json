@@ -13,13 +13,11 @@
     "node": ">=10"
   },
   "scripts": {
-    "start": "yarn start:tsdx && yarn start:umd",
-    "start:tsdx": "tsdx watch",
+    "start": "tsdx watch",
     "start:umd": "parcel src/example/index.html --global acceptNano --no-cache",
     "clean": "rm -rf dist && rm -rf umd",
     "prebuild": "yarn clean",
-    "build": "yarn build:tsdx && yarn build:umd && yarn build:example",
-    "build:tsdx": "tsdx build",
+    "build": "tsdx build && yarn build:umd && yarn build:example",
     "build:umd": "parcel build src/index.ts --global acceptNano --no-cache -d umd --out-file index.js",
     "build:example": "cp src/example/index.html example/index.html && replace-in-file ../index.ts https://unpkg.com/@accept-nano/client example/index.html",
     "test": "tsdx test",

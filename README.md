@@ -1,103 +1,87 @@
-# TSDX User Guide
+# accept-nano-client
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+[![Build Status](https://travis-ci.org/accept-nano/accept-nano-client.svg?branch=master)](https://travis-ci.org/accept-nano/accept-nano-client)
 
-> This TSDX setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+Payment gateway for [NANO](https://nano.org)
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
+_accept-nano-client_ is a JavaScript library that helps you to communicate with [accept-nano](https://github.com/accept-nano/accept-nano) server for receiving NANO payments easily.
 
-## Commands
+Cross-browser compatibility is tested with [BrowserStack](https://browserstack.com), thanks to their sponsorship.
 
-TSDX scaffolds your new library inside `/src`.
+## Usage
 
-To run TSDX, use:
+### Installation
+
+#### As an NPM Package
 
 ```bash
-npm start # or yarn start
+npm install accept-nano-client
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
-
-To do a one-off build, use `npm run build` or `yarn build`.
-
-To run tests, use `npm test` or `yarn test`.
-
-## Configuration
-
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-### Bundle Analysis
-
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
+```bash
+yarn add accept-nano-client
 ```
 
-### Rollup
+#### Directly in Browser, via UMD
 
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
-
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo')
-}
+```HTML
+<html>
+  <head>
+    ...
+    <script src="https://unpkg.com/@accept-nano/client"></script>
+  </head>
+  ...
+</html>
 ```
 
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
+After the _accept-nano-client_ script is loaded there will be a global variable called _acceptNano_, which you can access as `window.acceptNano`.
 
-## Module Formats
+### Creating a Payment Session
 
-CJS, ESModules, and UMD module formats are supported.
+To be able to initiate the payment process, you **must create a new payment session.**
 
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
+```ts
+const session = acceptNano.createSession({
+  apiURL: 'api.myAcceptNanoServer.com',
+  pollInterval: 1500,
+})
 
-## Named Exports
+// You can also register your event listeners to continue the flow based on session events.
+session.on('start', () => { ... })
+session.on('success', (payment: AcceptNanoPayment) => { ... })
+session.on('failure', (reason: AcceptNanoPaymentFailureReason) => { ... })
+```
 
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
+### Presenting the Payment Overlay
 
-## Including Styles
+After creating your session and attaching the event listeners, you can follow one of the given options to proceed with your payment flow.
 
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
+#### Option 1: Create a Payment Through Client
 
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
+If you want to create and verify an _accept-nano_ payment in your client application, you can use this option to create and verify a payment on client.
 
-## Publishing to NPM
+```ts
+session.createPayment({
+  amount: '1',
+  currenct: 'USD',
+  state: '{userId:7}',
+})
+```
 
-We recommend using [np](https://github.com/sindresorhus/np).
+#### Option 2: Verify a Payment Through Client
+
+If you create an _accept-nano_ payment from another source (such as your application's backend), you can use this option to perform the verification on client.
+
+```ts
+session.verifyPayment('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
+```
+
+## Contributing
+
+- Please open an issue if you have a question or suggestion.
+- Don't create a PR before discussing it first.
+
+## Who is using _accept-nano-client_ in production?
+
+- [Put.io](https://put.io)
+- [My Nano Ninja](https://mynano.ninja)

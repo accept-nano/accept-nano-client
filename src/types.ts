@@ -3,7 +3,7 @@ type StringifiedObject = string
 
 export type NanoAccount = string
 export type AcceptNanoPaymentToken = string
-export type AcceptNanoCurrency = 'NANO' | 'USD'
+export type AcceptNanoCurrency = 'nano' | 'USD'
 
 export type CreateAcceptNanoPaymentParams = {
   amount: StringifiedNumber
