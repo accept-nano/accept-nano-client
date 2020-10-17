@@ -14,7 +14,7 @@ describe('api', () => {
 
     const response = await api.createPayment({
       amount: '0.1',
-      currency: 'NANO',
+      currency: 'nano',
       state: '',
     })
 
@@ -47,7 +47,7 @@ describe('api', () => {
           "amount": "0.000001",
           "amountInCurrency": "0.000001",
           "balance": "0",
-          "currency": "NANO",
+          "currency": "nano",
           "fulfilled": false,
           "merchantNotified": false,
           "remainingSeconds": 14399,
@@ -104,7 +104,7 @@ describe('api', () => {
           "amount": "0.000001",
           "amountInCurrency": "0.000001",
           "balance": "0",
-          "currency": "NANO",
+          "currency": "nano",
           "fulfilled": false,
           "merchantNotified": false,
           "remainingSeconds": 14399,
