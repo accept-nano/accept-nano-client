@@ -28,7 +28,7 @@ export const createPaymentSession = ({
   const api = createAPI({ baseURL: apiURL })
   const dom = createDOM()
   const paymentService = createPaymentService({ api, pollInterval })
-    .onTransition(state => {
+    .onTransition((state) => {
       if (state.matches('creation') || state.matches('fetching')) {
         dom.mount()
         dom.renderLoading()

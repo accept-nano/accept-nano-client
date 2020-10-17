@@ -19,7 +19,11 @@ type Events = {
   close: () => void
 }
 
+type DOMScene = 'loading' | 'payment' | 'success' | 'failure'
+
 export const createDOM = () => {
+  let scene: DOMScene = 'loading'
+
   const eventEmitter = new EventEmitter<Events>()
   const handleCloseButtonClick = () => eventEmitter.emit('close')
 
@@ -59,12 +63,16 @@ export const createDOM = () => {
     },
 
     renderLoading: () => {
+      scene = 'loading'
       const loading = createLoading()
       setChildren(container, [loading])
     },
 
     renderPayment: (payment: AcceptNanoPayment) => {
-      createPayment(payment).then(paymentElement => {
+      if (scene === 'payment') return
+      scene = 'payment'
+
+      createPayment(payment).then((paymentElement) => {
         startCoundownInterval(payment.remainingSeconds)
         setChildren(content, [paymentElement])
         setChildren(container, [main])
@@ -72,6 +80,9 @@ export const createDOM = () => {
     },
 
     renderSuccess: () => {
+      if (scene === 'success') return
+      scene = 'success'
+
       // @TODO: centralise
       clearCountdownInterval()
 
@@ -101,6 +112,9 @@ export const createDOM = () => {
     },
 
     renderFailure: (reason: AcceptNanoPaymentFailureReason) => {
+      if (scene === 'failure') return
+      scene = 'failure'
+
       // @TODO: centralise
       clearCountdownInterval()
 

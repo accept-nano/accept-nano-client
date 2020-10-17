@@ -31,10 +31,7 @@ const createPaymentInfo = (payment: AcceptNanoPayment) => {
 }
 
 const createQRCodeElements = (payment: AcceptNanoPayment) => {
-  const amount_raw = Big(payment.amount)
-    .times(multNANO)
-    .toFixed()
-    .toString()
+  const amount_raw = Big(payment.amount).times(multNANO).toFixed().toString()
 
   const qrText = `nano:${payment.account}?amount=${amount_raw}`
 
@@ -51,7 +48,7 @@ const createQRCodeElements = (payment: AcceptNanoPayment) => {
 }
 
 export const createPayment = (payment: AcceptNanoPayment) =>
-  new Promise<HTMLDivElement>(resolve => {
+  new Promise<HTMLDivElement>((resolve) => {
     const paymentInfo = createPaymentInfo(payment)
     const [qrText, qrCanvas] = createQRCodeElements(payment)
 
