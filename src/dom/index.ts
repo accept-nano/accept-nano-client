@@ -6,25 +6,23 @@ import {
   bodyStyle,
   statusBarStyle,
   contentStyle,
-  sharedStyles,
   colors,
 } from './styles'
-import { createHeader } from './header'
-import { createFooter } from './footer'
-import { createLoading } from './loading'
-import { createPayment } from './payment'
+import { createHeader } from './elements/header'
+import { createFooter } from './elements/footer'
+import { createLoadingScene } from './scenes/loading'
+import { createPaymentScene } from './scenes/payment'
+import { createSuccessScene } from './scenes/success'
+import { createFailureScene } from './scenes/failure'
 import { formatSeconds } from '../utils'
 
-type Events = {
-  close: () => void
-}
-
+type DOMEvents = { close: () => void }
 type DOMScene = 'loading' | 'payment' | 'success' | 'failure'
 
 export const createDOM = () => {
   let scene: DOMScene = 'loading'
 
-  const eventEmitter = new EventEmitter<Events>()
+  const eventEmitter = new EventEmitter<DOMEvents>()
   const handleCloseButtonClick = () => eventEmitter.emit('close')
 
   const container = el('div', { id: 'accept-nano', style: containerStyle })
@@ -35,7 +33,6 @@ export const createDOM = () => {
   const footer = createFooter()
   setChildren(main, [header, statusBar, content, footer])
 
-  // countdown
   let countdownSeconds = 0
   let countdownInterval: any = undefined
   const startCoundownInterval = (seconds: number) => {
@@ -57,89 +54,72 @@ export const createDOM = () => {
 
     mount: () => mount(document.body, container),
     unmount: () => {
-      // @TODO: centralise
-      clearCountdownInterval()
+      clearCountdownInterval() // @TODO: centralise, preferably within the state machine
       unmount(document.body, container)
     },
 
     renderLoading: () => {
       scene = 'loading'
-      const loading = createLoading()
-      setChildren(container, [loading])
+      setChildren(container, [createLoadingScene()])
     },
 
     renderPayment: (payment: AcceptNanoPayment) => {
+      // @TODO: maybe create a new state machine for this?
       if (scene === 'payment') return
       scene = 'payment'
+      // -------- //
 
-      createPayment(payment).then(paymentElement => {
-        startCoundownInterval(payment.remainingSeconds)
-        setChildren(content, [paymentElement])
+      createPaymentScene(payment).then(paymentScene => {
+        startCoundownInterval(payment.remainingSeconds) // @TODO: move to state machine
+        setChildren(content, [paymentScene])
         setChildren(container, [main])
       })
     },
 
     renderSuccess: () => {
+      // @TODO: maybe create a new state machine for this?
       if (scene === 'success') return
       scene = 'success'
 
-      // @TODO: centralise
-      clearCountdownInterval()
+      clearCountdownInterval() // @TODO: centralise, preferably within the state machine
+      // -------- //
 
-      const title = el('h2', { style: sharedStyles.titleHeader }, 'Thank you')
-      const message = el(
-        'p',
-        { style: sharedStyles.messageBody },
-        `We've successfully received your payment.`,
-      )
-      const button = el(
-        'button',
-        {
-          style: `
-          ${sharedStyles.actionButton}
-          background: ${colors.green}!important;
-        `,
-          onclick: handleCloseButtonClick,
-        },
-        'Done',
-      )
-
+      // configure statusBar
       statusBar.textContent = 'Success'
       setStyle(statusBar, { background: colors.green })
 
-      setChildren(content, [title, message, button])
+      // configure content
+      setChildren(content, [
+        createSuccessScene({
+          onClose: handleCloseButtonClick,
+        }),
+      ])
+
+      // configure container
       setChildren(container, [main])
     },
 
     renderFailure: (reason: AcceptNanoPaymentFailureReason) => {
+      // @TODO: maybe create a new state machine for this?
       if (scene === 'failure') return
       scene = 'failure'
 
-      // @TODO: centralise
-      clearCountdownInterval()
+      clearCountdownInterval() // @TODO: centralise, preferably within the state machine
+      // -------- //
 
-      const title = el('h2', { style: sharedStyles.titleHeader }, 'Oops!')
-      const message = el(
-        'p',
-        { style: sharedStyles.messageBody },
-        `An error occurred: ${reason.type}`,
-      )
-      const button = el(
-        'button',
-        {
-          style: `
-          ${sharedStyles.actionButton}
-          background: ${colors.red}!important;
-        `,
-          onclick: handleCloseButtonClick,
-        },
-        'Close',
-      )
-
+      // configure statusBar
       statusBar.textContent = 'Error!'
       setStyle(statusBar, { background: colors.red })
 
-      setChildren(content, [title, message, button])
+      // configure content
+      setChildren(content, [
+        createFailureScene({
+          reason,
+          onClose: handleCloseButtonClick,
+        }),
+      ])
+
+      // configure container
       setChildren(container, [main])
     },
   }

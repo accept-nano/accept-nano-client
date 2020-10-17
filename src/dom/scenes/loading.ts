@@ -1,6 +1,6 @@
 import { el, setChildren } from 'redom'
 import { Spinner } from 'spin.js'
-import { colors } from './styles'
+import { colors } from '../styles'
 
 const spinnerConfig = {
   lines: 11,
@@ -39,7 +39,7 @@ const spinnerStyle = `
   }
 `
 
-export const createLoading = () => {
+export const createLoadingScene = () => {
   const container = el('div', { style: containerStyle })
 
   const styleNode = document.createElement('style')

@@ -1,8 +1,8 @@
 import { el } from 'redom'
 import Big from 'big.js'
 import QRCode from 'qrcode'
-import { AcceptNanoPayment } from '../types'
-import { sharedStyles } from './styles'
+import { AcceptNanoPayment } from '../../types'
+import { sharedStyles } from '../styles'
 
 const multNANO = Big('1000000000000000000000000000000')
 
@@ -15,18 +15,18 @@ const createAccountElements = (account: AcceptNanoPayment['account']) => {
 
   const accountText = el('p', { style: sharedStyles.infoText }, account)
 
-  return [accountHeader, accountText] as const
+  return { accountHeader, accountText } as const
 }
 
 const createAmountElements = (amount: AcceptNanoPayment['amount']) => {
   const amountHeader = el('h5', { style: sharedStyles.infoHeader }, 'Amount')
   const amountText = el('p', { style: sharedStyles.infoText }, `${amount} NANO`)
-  return [amountHeader, amountText] as const
+  return { amountHeader, amountText } as const
 }
 
 const createPaymentInfo = (payment: AcceptNanoPayment) => {
-  const [accountHeader, accountText] = createAccountElements(payment.account)
-  const [amountHeader, amountText] = createAmountElements(payment.amount)
+  const { accountHeader, accountText } = createAccountElements(payment.account)
+  const { amountHeader, amountText } = createAmountElements(payment.amount)
   return el('div', [accountHeader, accountText, amountHeader, amountText])
 }
 
@@ -47,13 +47,13 @@ const createQRCodeElements = (payment: AcceptNanoPayment) => {
     `,
   })
 
-  return [qrText, qrCanvas] as const
+  return { qrText, qrCanvas } as const
 }
 
-export const createPayment = (payment: AcceptNanoPayment) =>
+export const createPaymentScene = (payment: AcceptNanoPayment) =>
   new Promise<HTMLDivElement>(resolve => {
     const paymentInfo = createPaymentInfo(payment)
-    const [qrText, qrCanvas] = createQRCodeElements(payment)
+    const { qrText, qrCanvas } = createQRCodeElements(payment)
 
     QRCode.toCanvas(qrCanvas, qrText, (error: unknown) => {
       if (error) {
