@@ -1,12 +1,22 @@
 import { delay, formatSeconds } from './utils'
 
 describe('utils', () => {
+  beforeAll(() => {
+    jest.useFakeTimers()
+  })
+
   describe('delay', () => {
     it('delays... 🤡', async () => {
-      const before = Date.now()
-      await delay(100)
-      const after = Date.now()
-      expect(after - before).toBeGreaterThanOrEqual(100)
+      const callback = jest.fn()
+      delay(100).then(() => callback())
+
+      jest.advanceTimersByTime(20)
+      await Promise.resolve()
+      expect(callback).not.toBeCalled()
+
+      jest.advanceTimersByTime(80)
+      await Promise.resolve()
+      expect(callback).toBeCalled()
     })
   })
 
