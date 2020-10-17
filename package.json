@@ -1,44 +1,70 @@
 {
   "version": "2.0.0",
   "license": "MIT",
-  "umd:main": "umd/index.js",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "umd:main": "umd/index.js",
   "files": [
     "dist",
+    "umd",
     "src"
   ],
   "engines": {
     "node": ">=10"
   },
   "scripts": {
-    "start": "tsc -w --noEmit && parcel src/index.html --global acceptNano --no-cache",
-    "build": "tsc && parcel build src/index.ts --global acceptNano --no-cache -d umd --out-file index.js",
-    "build:example": "cp src/index.html example/index.html && replace-in-file ./index.ts https://unpkg.com/@accept-nano/client example/index.html",
-    "test": "jest",
-    "coveralls": "yarn test --coverage && cat ./coverage/lcov.info | coveralls",
-    "prettier": "prettier --write ./src"
+    "start": "yarn start:tsdx && yarn start:umd",
+    "start:tsdx": "tsdx watch",
+    "start:umd": "parcel src/example/index.html --global acceptNano --no-cache",
+    "clean": "rm -rf dist && rm -rf umd",
+    "prebuild": "yarn clean",
+    "build": "yarn build:tsdx && yarn build:umd && yarn build:example",
+    "build:tsdx": "tsdx build",
+    "build:umd": "parcel build src/index.ts --global acceptNano --no-cache -d umd --out-file index.js",
+    "build:example": "cp src/example/index.html example/index.html && replace-in-file ../index.ts https://unpkg.com/@accept-nano/client example/index.html",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "yarn build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "coveralls": "tsdx test --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
   "prettier": "@putdotio/prettier-config",
   "name": "@accept-nano/client",
   "author": "Altay Aydemir",
   "devDependencies": {
     "@putdotio/prettier-config": "^1.0.0",
+    "@size-limit/preset-small-lib": "^4.6.0",
     "@types/big.js": "^6.0.0",
     "@types/jest": "^26.0.14",
     "@types/qrcode": "^1.3.5",
     "axios-mock-adapter": "^1.18.2",
     "coveralls": "^3.1.0",
-    "jest": "^26.5.3",
+    "husky": "^4.3.0",
     "jest-canvas-mock": "^2.3.0",
     "parcel-bundler": "^1.12.4",
-    "prettier": "^2.1.2",
     "replace-in-file": "^6.1.0",
-    "ts-jest": "^26.4.1",
+    "size-limit": "^4.6.0",
+    "tsdx": "^0.14.1",
     "tslib": "^2.0.3",
     "typescript": "^4.0.3"
   },
+  "size-limit": [
+    {
+      "path": "dist/client.cjs.production.min.js",
+      "limit": "60 KB"
+    },
+    {
+      "path": "dist/client.esm.js",
+      "limit": "60 KB"
+    }
+  ],
   "publishConfig": {
     "access": "public"
   },

@@ -18,20 +18,20 @@ describe('paymentSession', () => {
   afterEach(mock.reset)
 
   describe('verifyPayment flow', () => {
-    it('dispatches start event once the session is initialized', (done) => {
+    it('dispatches start event once the session is initialized', done => {
       const paymentSession = createPaymentSession(mockSessionConfig)
       paymentSession.on('start', done)
       paymentSession.verifyPayment(mockAcceptNanoPayment.token)
     })
 
-    it('dispatches success event once the payment is completed', (done) => {
+    it('dispatches success event once the payment is completed', done => {
       mock
         .onGet(`${mockAPIURL}/verify`)
         .reply(200, mockCompletedAcceptNanoPayment)
 
       const paymentSession = createPaymentSession(mockSessionConfig)
 
-      paymentSession.on('success', (payment) => {
+      paymentSession.on('success', payment => {
         expect(payment).toEqual(mockCompletedAcceptNanoPayment)
         done()
       })
@@ -41,7 +41,7 @@ describe('paymentSession', () => {
   })
 
   describe('createPayment flow', () => {
-    it('dispatches start event once the session is initialized', (done) => {
+    it('dispatches start event once the session is initialized', done => {
       const paymentSession = createPaymentSession(mockSessionConfig)
       paymentSession.on('start', done)
       paymentSession.createPayment({
@@ -50,7 +50,7 @@ describe('paymentSession', () => {
       })
     })
 
-    it('dispatches success event once the payment is completed', (done) => {
+    it('dispatches success event once the payment is completed', done => {
       mock.onPost(`${mockAPIURL}/pay`).reply(200, mockAcceptNanoPayment)
 
       mock
@@ -59,7 +59,7 @@ describe('paymentSession', () => {
 
       const paymentSession = createPaymentSession(mockSessionConfig)
 
-      paymentSession.on('success', (payment) => {
+      paymentSession.on('success', payment => {
         expect(payment).toEqual(mockCompletedAcceptNanoPayment)
         done()
       })

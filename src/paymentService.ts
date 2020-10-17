@@ -130,7 +130,7 @@ export const createPaymentService = ({
           src: (_context, event) =>
             api
               .createPayment((event as CreatePaymentEvent).params)
-              .then((response) => response.data),
+              .then(response => response.data),
           onDone: {
             target: 'verification',
             actions: setPaymentData,
@@ -150,7 +150,7 @@ export const createPaymentService = ({
           src: (_context, event) =>
             api
               .fetchPayment((event as StartPaymentVerificationEvent).token)
-              .then((response) => response.data),
+              .then(response => response.data),
           onDone: {
             target: 'verification',
             actions: setPaymentData,
@@ -167,7 +167,7 @@ export const createPaymentService = ({
 
       verification: {
         invoke: {
-          src: (context) => async (callback: Sender<PaymentEvent>) => {
+          src: context => async (callback: Sender<PaymentEvent>) => {
             await delay(pollInterval)
 
             const { token } = context.payment as AcceptNanoPayment

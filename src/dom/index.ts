@@ -72,7 +72,7 @@ export const createDOM = () => {
       if (scene === 'payment') return
       scene = 'payment'
 
-      createPayment(payment).then((paymentElement) => {
+      createPayment(payment).then(paymentElement => {
         startCoundownInterval(payment.remainingSeconds)
         setChildren(content, [paymentElement])
         setChildren(container, [main])
