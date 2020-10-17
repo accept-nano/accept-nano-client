@@ -1,14 +1,16 @@
 # accept-nano-client
 
 [![Build Status](https://travis-ci.org/accept-nano/accept-nano-client.svg?branch=master)](https://travis-ci.org/accept-nano/accept-nano-client)
+[![Coverage Status](https://coveralls.io/repos/github/accept-nano/accept-nano-client/badge.svg?branch=master)](https://coveralls.io/github/accept-nano/accept-nano-client?branch=master)
+![npm (scoped)](https://img.shields.io/npm/v/@accept-nano/client)
+![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@accept-nano/client)
+![GitHub](https://img.shields.io/github/license/accept-nano/accept-nano-client)
 
 Payment gateway for [NANO](https://nano.org)
 
-_accept-nano-client_ is a JavaScript library that helps you to communicate with [accept-nano](https://github.com/accept-nano/accept-nano) server for receiving NANO payments easily.
+_accept-nano-client_ is a JavaScript package that helps you to communicate with [accept-nano](https://github.com/accept-nano/accept-nano) server for receiving NANO payments easily in your client-side applications.
 
-Cross-browser compatibility is tested with [BrowserStack](https://browserstack.com), thanks to their sponsorship.
-
-## Installation
+## Installing
 
 ### via NPM
 
@@ -32,7 +34,7 @@ After the _accept-nano-client_ script is loaded there will be a global variable 
 </html>
 ```
 
-## Usage
+## Using
 
 ### Creating a Payment Session
 
@@ -85,3 +87,11 @@ session.verifyPayment('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
 
 - [Put.io](https://put.io)
 - [My Nano Ninja](https://mynano.ninja)
+
+Please send a PR to list your site if _accept-nano_ is helping you to receive NANO payments.
+
+## Sponsors
+
+[![Browserstack](http://wallpapers-for-ipad.com/fullpage/imgs3/logos/browserstack3.png)](http://www.browserstack.com/)
+
+Cross-browser compatibility is tested with [BrowserStack](https://browserstack.com), thanks for [supporting open source](https://www.browserstack.com/open-source) ❤️️
