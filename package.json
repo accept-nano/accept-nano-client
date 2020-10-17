@@ -1,15 +1,19 @@
 {
   "version": "2.0.0",
   "license": "MIT",
+  "umd:main": "umd/index.js",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "engines": {
     "node": ">=10"
   },
   "scripts": {
     "start": "tsc -w --noEmit && parcel src/index.html --global acceptNano --no-cache",
-    "build": "parcel build src/index.ts --global acceptNano --no-cache --out-file index.js",
+    "build": "tsc && parcel build src/index.ts --global acceptNano --no-cache -d umd --out-file index.js",
     "build:example": "cp src/index.html example/index.html && replace-in-file ./index.ts https://unpkg.com/@accept-nano/client example/index.html",
     "test": "jest",
     "coveralls": "yarn test --coverage && cat ./coverage/lcov.info | coveralls",
@@ -32,6 +36,7 @@
     "prettier": "^2.1.2",
     "replace-in-file": "^6.1.0",
     "ts-jest": "^26.4.1",
+    "tslib": "^2.0.3",
     "typescript": "^4.0.3"
   },
   "publishConfig": {
