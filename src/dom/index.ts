@@ -49,8 +49,7 @@ export const createDOM = () => {
   }
 
   return {
-    on: eventEmitter.on.bind(eventEmitter),
-    once: eventEmitter.once.bind(eventEmitter),
+    on: eventEmitter.once.bind(eventEmitter),
 
     mount: () => mount(document.body, container),
     unmount: () => {

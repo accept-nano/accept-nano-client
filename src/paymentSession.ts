@@ -51,14 +51,13 @@ export const createPaymentSession = ({
     })
     .start()
 
-  dom.once('close', () => {
+  dom.on('close', () => {
     paymentService.send({ type: 'TERMINATE' })
     dom.unmount()
   })
 
   return {
-    on: eventEmitter.on.bind(eventEmitter),
-    once: eventEmitter.once.bind(eventEmitter),
+    on: eventEmitter.once.bind(eventEmitter),
     createPayment: (params: CreateAcceptNanoPaymentParams) => {
       paymentService.send({ type: 'CREATE_PAYMENT', params })
     },
