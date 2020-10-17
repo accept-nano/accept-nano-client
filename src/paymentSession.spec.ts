@@ -1,6 +1,6 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
-import { createSession } from './index'
+import { createPaymentSession } from './paymentSession'
 import {
   mockAPIURL,
   mockAcceptNanoPayment,
@@ -12,14 +12,14 @@ export const mockSessionConfig = {
   pollInterval: 100,
 }
 
-describe('acceptNano/createSession', () => {
+describe('createPaymentSession', () => {
   const mock = new MockAdapter(axios)
 
   afterEach(mock.reset)
 
   describe('verifyPayment flow', () => {
     it('dispatches start event once the session is initialized', done => {
-      const paymentSession = createSession(mockSessionConfig)
+      const paymentSession = createPaymentSession(mockSessionConfig)
       paymentSession.on('start', done)
       paymentSession.verifyPayment(mockAcceptNanoPayment.token)
     })
@@ -29,7 +29,7 @@ describe('acceptNano/createSession', () => {
         .onGet(`${mockAPIURL}/verify`)
         .reply(200, mockCompletedAcceptNanoPayment)
 
-      const paymentSession = createSession(mockSessionConfig)
+      const paymentSession = createPaymentSession(mockSessionConfig)
 
       paymentSession.on('success', payment => {
         expect(payment).toEqual(mockCompletedAcceptNanoPayment)
@@ -42,7 +42,7 @@ describe('acceptNano/createSession', () => {
 
   describe('createPayment flow', () => {
     it('dispatches start event once the session is initialized', done => {
-      const paymentSession = createSession(mockSessionConfig)
+      const paymentSession = createPaymentSession(mockSessionConfig)
       paymentSession.on('start', done)
       paymentSession.createPayment({
         amount: mockAcceptNanoPayment.amount,
@@ -57,7 +57,7 @@ describe('acceptNano/createSession', () => {
         .onGet(`${mockAPIURL}/verify`)
         .reply(200, mockCompletedAcceptNanoPayment)
 
-      const paymentSession = createSession(mockSessionConfig)
+      const paymentSession = createPaymentSession(mockSessionConfig)
 
       paymentSession.on('success', payment => {
         expect(payment).toEqual(mockCompletedAcceptNanoPayment)
