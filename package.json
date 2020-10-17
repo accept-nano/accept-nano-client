@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "tsc -w --noEmit && parcel src/index.html --global acceptNano --no-cache",
-    "build": "tsc && parcel build src/index.ts --global acceptNano --no-cache --out-file index.js",
+    "build": "parcel build src/index.ts --global acceptNano --no-cache --out-file index.js",
     "build:example": "cp src/index.html example/index.html && replace-in-file ./index.ts https://unpkg.com/@accept-nano/client example/index.html",
     "test": "jest",
     "coveralls": "yarn test --coverage && cat ./coverage/lcov.info | coveralls",
@@ -19,7 +19,6 @@
   "prettier": "@putdotio/prettier-config",
   "name": "@accept-nano/client",
   "author": "Altay Aydemir",
-  "module": "dist/client.esm.js",
   "devDependencies": {
     "@putdotio/prettier-config": "^1.0.0",
     "@types/big.js": "^6.0.0",
