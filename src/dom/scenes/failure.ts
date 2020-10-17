@@ -1,6 +1,6 @@
 import { el } from 'redom'
 import { AcceptNanoPaymentFailureReason } from '../../types'
-import { sharedStyles, colors } from '../styles'
+import { sharedStyles, colors } from '../style'
 
 export const createFailureScene = ({
   reason,

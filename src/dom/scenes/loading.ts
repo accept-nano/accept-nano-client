@@ -1,6 +1,6 @@
 import { el, setChildren } from 'redom'
 import { Spinner } from 'spin.js'
-import { colors } from '../styles'
+import { colors } from '../style'
 
 const spinnerConfig = {
   lines: 11,

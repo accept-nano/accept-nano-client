@@ -2,7 +2,7 @@ import { el } from 'redom'
 import Big from 'big.js'
 import QRCode from 'qrcode'
 import { AcceptNanoPayment } from '../../types'
-import { sharedStyles } from '../styles'
+import { sharedStyles } from '../style'
 
 const multNANO = Big('1000000000000000000000000000000')
 

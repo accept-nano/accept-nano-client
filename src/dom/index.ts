@@ -1,14 +1,9 @@
 import { el, setChildren, mount, unmount, setStyle } from 'redom'
 import { EventEmitter } from '@byungi/event-emitter'
 import { AcceptNanoPayment, AcceptNanoPaymentFailureReason } from '../types'
-import {
-  containerStyle,
-  bodyStyle,
-  statusBarStyle,
-  contentStyle,
-  colors,
-} from './styles'
+import { containerStyle, bodyStyle, contentStyle, colors } from './style'
 import { createHeader } from './elements/header'
+import { createStatusBar } from './elements/statusBar'
 import { createFooter } from './elements/footer'
 import { createLoadingScene } from './scenes/loading'
 import { createPaymentScene } from './scenes/payment'
@@ -28,7 +23,7 @@ export const createDOM = () => {
   const container = el('div', { id: 'accept-nano', style: containerStyle })
   const main = el('div', { id: 'accept-nano-body', style: bodyStyle })
   const header = createHeader({ onClose: handleCloseButtonClick })
-  const statusBar = el('div', { style: statusBarStyle }, 'Starting...')
+  const statusBar = createStatusBar()
   const content = el('div', { style: contentStyle })
   const footer = createFooter()
   setChildren(main, [header, statusBar, content, footer])

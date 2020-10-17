@@ -1,5 +1,5 @@
 import { el } from 'redom'
-import { sharedStyles, colors } from '../styles'
+import { sharedStyles, colors } from '../style'
 
 export const createSuccessScene = ({ onClose }: { onClose: () => void }) => {
   const title = el('h2', { style: sharedStyles.titleHeader }, 'Thank you')

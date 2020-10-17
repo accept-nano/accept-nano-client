@@ -1,5 +1,5 @@
 import { el, setChildren } from 'redom'
-import { sharedStyles, colors } from '../styles'
+import { sharedStyles, colors } from '../style'
 
 export const createHeader = ({ onClose }: { onClose: () => void }) => {
   const header = el('div', {

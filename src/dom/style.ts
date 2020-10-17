@@ -75,13 +75,6 @@ export const bodyStyle = `
   transform: translate(-50%, -20%)!important;
 `
 
-export const statusBarStyle = `
-  color: white!important;
-  background: ${colors.navy}!important;
-  font-size: 12px!important;
-  padding: 8px!important;
-`
-
 export const contentStyle = `
   padding: 20px 30px!important;
 `
