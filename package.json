@@ -11,11 +11,12 @@
     "node": ">=10"
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
+    "start": "tsdx watch --format cjs,esm,umd --name acceptNano",
+    "build": "tsdx build --format cjs,esm,umd --name acceptNano",
+    "build:example": "cp src/index.html example/index.html && replace-in-file ../dist/acceptnano.umd.production.min.js https://unpkg.com/@accept-nano/client example/index.html",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "prepare": "yarn build",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "coveralls": "tsdx test --coverage && cat ./coverage/lcov.info | coveralls"
@@ -49,8 +50,9 @@
     "coveralls": "^3.1.0",
     "husky": "^4.3.0",
     "jest-canvas-mock": "^2.3.0",
+    "replace-in-file": "^6.1.0",
     "size-limit": "^4.6.0",
-    "tsdx": "^0.14.0",
+    "tsdx": "^0.14.1",
     "tslib": "^2.0.3",
     "typescript": "^4.0.3"
   },
