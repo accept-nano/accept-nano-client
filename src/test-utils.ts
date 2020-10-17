@@ -30,3 +30,7 @@ export const createMockAPIResponseWithPayment = (
   config: {},
   data: payment,
 })
+
+export const clearDOM = () => {
+  document.getElementsByTagName('body')[0].innerHTML = ''
+}

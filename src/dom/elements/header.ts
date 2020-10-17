@@ -25,7 +25,6 @@ export const createHeader = ({ onClose }: { onClose: () => void }) => {
   const headerCloseButton = el(
     'button',
     {
-      id: 'accept-nano-close-button',
       style: `
         font-size: 16px!important;
         color: ${colors.lightGray}!important;
