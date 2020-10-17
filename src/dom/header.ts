@@ -7,8 +7,8 @@ export const createHeader = ({ onClose }: { onClose: () => void }) => {
       background: ${colors.blue}!important;
       padding: 20px!important;
       height: 18px!important;
-      border-top-left-radius:  ${sharedStyles.mainBorderRadius}!important;
-      border-top-right-radius:  ${sharedStyles.mainBorderRadius}!important;
+      border-top-left-radius: ${sharedStyles.mainBorderRadius}!important;
+      border-top-right-radius: ${sharedStyles.mainBorderRadius}!important;
     `,
   })
 
@@ -27,16 +27,16 @@ export const createHeader = ({ onClose }: { onClose: () => void }) => {
     {
       id: 'accept-nano-close-button',
       style: `
-      font-size: 16px!important;
-      color: rgba(255, 255, 255, 0.5)!important;
-      background: transparent!important;
-      padding: 0!important;
-      margin: 0!important;
-      border: none!important;
-      outline: none!important;
-      cursor: pointer!important;
-      float: right!important;
-    `,
+        font-size: 16px!important;
+        color: ${colors.lightGray}!important;
+        background: transparent!important;
+        padding: 0!important;
+        margin: 0!important;
+        border: none!important;
+        outline: none!important;
+        cursor: pointer!important;
+        float: right!important;
+      `,
       onclick: onClose,
     },
     'X',

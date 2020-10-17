@@ -1,5 +1,6 @@
 import { el, setChildren } from 'redom'
 import { Spinner } from 'spin.js'
+import { colors } from './styles'
 
 const spinnerConfig = {
   lines: 11,
@@ -16,39 +17,38 @@ const spinnerConfig = {
   zIndex: 2e9,
   shadow: false,
   hwaccel: false,
-  color: '#ffffff',
+  color: colors.white,
   top: '20%',
   fadeColor: 'transparent',
   animation: 'spinner-line-fade-quick',
 }
 
-export const createLoading = () => {
-  const loading = el('div', {
-    style: {
-      width: '100%',
-      height: '100%',
-    },
-  })
+const containerStyle = {
+  width: '100%',
+  height: '100%',
+}
 
-  const styles = `
-     @keyframes spinner-line-fade-quick {
-      0%, 39%, 100% {
-        opacity: 0.25;
-      }
-      40% {
-        opacity: 1;
-      }
+const spinnerStyle = `
+  @keyframes spinner-line-fade-quick {
+    0%, 39%, 100% {
+      opacity: 0.25;
     }
-  `
+    40% {
+      opacity: 1;
+    }
+  }
+`
+
+export const createLoading = () => {
+  const container = el('div', { style: containerStyle })
 
   const styleNode = document.createElement('style')
-  styleNode.innerHTML = styles
+  styleNode.innerHTML = spinnerStyle
 
   const spinner = new Spinner(spinnerConfig).spin()
-
   if (spinner.el) {
-    setChildren(loading, [spinner.el, styleNode])
+    setChildren(container, [spinner.el, styleNode])
   }
 
-  return loading
+  return container
 }

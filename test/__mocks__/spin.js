@@ -1,10 +1,14 @@
 class Spinner {
+  constructor(config) {
+    this.el = document.createElement('div')
+  }
+
   spin() {
-    return jest.fn()
+    return this
   }
 
   stop() {
-    return jest.fn()
+    return this
   }
 }
 

@@ -16,7 +16,7 @@ describe('paymentService', () => {
 
   afterEach(jest.clearAllMocks)
 
-  describe('create payment', () => {
+  describe('createPayment flow', () => {
     it('creates a payment session through API and transitions to verification state', done => {
       mockFetchPayment.mockResolvedValueOnce(
         createMockAPIResponseWithPayment({
@@ -70,7 +70,7 @@ describe('paymentService', () => {
     })
   })
 
-  describe('verify payment flow', () => {
+  describe('verifyPayment flow', () => {
     it('starts verifying a payment through API and transitions to success state', done => {
       const paymentService = createPaymentService({
         api: mockAPI,

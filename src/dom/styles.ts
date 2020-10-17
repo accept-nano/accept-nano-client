@@ -3,6 +3,9 @@ export const colors = {
   navy: '#000134',
   green: '#06af76',
   red: '#B03738',
+  darkGray: '#424754',
+  lightGray: 'rgba(255, 255, 255, 0.5)',
+  white: '#F8F8F8',
 } as const
 
 export const sharedStyles = {
@@ -33,7 +36,7 @@ export const sharedStyles = {
   `,
   infoHeader: `
     text-transform: uppercase!important;
-    color: #000134!important;
+    color: ${colors.navy}!important;
     margin-top: 20px!important;
     margin-bottom: 5px!important;
     font-size: 13px!important;
@@ -42,7 +45,7 @@ export const sharedStyles = {
     word-wrap: break-word!important;
     margin-top: 0!important;
     font-size: 14px!important;
-    color: #424754!important;
+    color: ${colors.darkGray}!important;
   `,
 } as const
 
@@ -61,7 +64,7 @@ export const containerStyle = `
 export const bodyStyle = `
   position: absolute!important;
   margin: 5% 0!important;
-  background: #F8F8F8!important;
+  background: ${colors.white}!important;
   width: 360px!important;
   height: auto!important;
   text-align: center!important;

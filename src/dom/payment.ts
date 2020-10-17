@@ -12,14 +12,16 @@ const createAccountElements = (account: AcceptNanoPayment['account']) => {
     { style: sharedStyles.infoHeader },
     'Account Address',
   )
+
   const accountText = el('p', { style: sharedStyles.infoText }, account)
-  return [accountHeader, accountText]
+
+  return [accountHeader, accountText] as const
 }
 
 const createAmountElements = (amount: AcceptNanoPayment['amount']) => {
   const amountHeader = el('h5', { style: sharedStyles.infoHeader }, 'Amount')
   const amountText = el('p', { style: sharedStyles.infoText }, `${amount} NANO`)
-  return [amountHeader, amountText]
+  return [amountHeader, amountText] as const
 }
 
 const createPaymentInfo = (payment: AcceptNanoPayment) => {

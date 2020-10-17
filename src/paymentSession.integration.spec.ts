@@ -21,14 +21,10 @@ describe('paymentSession', () => {
 
   afterEach(mock.reset)
 
-  describe('verifyPayment', () => {
+  describe('verifyPayment flow', () => {
     it('dispatches start event once the session is initialized', done => {
       const paymentSession = createPaymentSession(mockSessionConfig)
-
-      paymentSession.on('start', () => {
-        done()
-      })
-
+      paymentSession.on('start', done)
       paymentSession.verifyPayment(mockAcceptNanoPayment.token)
     })
 
@@ -51,11 +47,7 @@ describe('paymentSession', () => {
   describe('createPayment flow', () => {
     it('dispatches start event once the session is initialized', done => {
       const paymentSession = createPaymentSession(mockSessionConfig)
-
-      paymentSession.on('start', () => {
-        done()
-      })
-
+      paymentSession.on('start', done)
       paymentSession.createPayment({
         amount: mockAcceptNanoPayment.amount,
         currency: mockAcceptNanoPayment.currency,
