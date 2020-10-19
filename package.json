@@ -3,6 +3,7 @@
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "unpkg": "umd/index.js",
   "umd:main": "umd/index.js",
   "files": [
     "dist",
