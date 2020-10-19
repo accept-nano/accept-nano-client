@@ -62,6 +62,8 @@ After creating your session and attaching the event listeners, you can follow on
 
 If you want to create and verify an _accept-nano_ payment in your client application, you can use this option.
 
+After the payment is created, the client will automatically proceed to the verification step.
+
 ```ts
 type CreatePaymentParams = {
   amount: string // stringified number
@@ -75,8 +77,6 @@ session.createPayment({
   state: '{userId:7}',
 })
 ```
-
-After the payment is created, the client will automatically proceed to the verification step.
 
 #### Option 2: Verify a Payment Through Client
 
