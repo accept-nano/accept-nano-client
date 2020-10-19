@@ -8,7 +8,7 @@
 
 Payment gateway for [NANO](https://nano.org)
 
-_accept-nano-client_ is a JavaScript package that helps you to communicate with [accept-nano](https://github.com/accept-nano/accept-nano) server for receiving NANO payments easily in your client-side applications.
+_accept-nano-client_ is a JavaScript package that helps you to communicate with [_accept-nano_](https://github.com/accept-nano/accept-nano) for receiving NANO payments easily in your client-side applications.
 
 ## Installing
 
