@@ -15,6 +15,7 @@ export const mockSessionConfig = {
 }
 
 describe('createPaymentSession', () => {
+  const { token, amount, currency } = mockAcceptNanoPayment
   const mock = new MockAdapter(axios)
 
   afterEach(() => {
@@ -24,12 +25,9 @@ describe('createPaymentSession', () => {
 
   describe('createPayment flow', () => {
     it('dispatches start event once the session is initialized', done => {
-      const paymentSession = createPaymentSession(mockSessionConfig)
+      const paymentSession = createPaymentSession({ apiURL: mockAPIURL })
       paymentSession.on('start', done)
-      paymentSession.createPayment({
-        amount: mockAcceptNanoPayment.amount,
-        currency: mockAcceptNanoPayment.currency,
-      })
+      paymentSession.createPayment({ amount, currency })
     })
 
     it('dispatches success event once the payment is completed', done => {
@@ -46,18 +44,15 @@ describe('createPaymentSession', () => {
         done()
       })
 
-      paymentSession.createPayment({
-        amount: mockAcceptNanoPayment.amount,
-        currency: mockAcceptNanoPayment.currency,
-      })
+      paymentSession.createPayment({ amount, currency })
     })
   })
 
   describe('verifyPayment flow', () => {
     it('dispatches start event once the session is initialized', done => {
-      const paymentSession = createPaymentSession(mockSessionConfig)
+      const paymentSession = createPaymentSession({ apiURL: mockAPIURL })
       paymentSession.on('start', done)
-      paymentSession.verifyPayment(mockAcceptNanoPayment.token)
+      paymentSession.verifyPayment({ token })
     })
 
     it('dispatches success event once the payment is completed', done => {
@@ -72,7 +67,7 @@ describe('createPaymentSession', () => {
         done()
       })
 
-      paymentSession.verifyPayment(mockAcceptNanoPayment.token)
+      paymentSession.verifyPayment({ token })
     })
 
     it('dispatches cancel event if close button is clicked during the verification', done => {
@@ -92,7 +87,7 @@ describe('createPaymentSession', () => {
         done()
       })
 
-      paymentSession.verifyPayment(mockAcceptNanoPayment.token)
+      paymentSession.verifyPayment({ token })
     })
   })
 })

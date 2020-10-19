@@ -20,7 +20,7 @@ npm install accept-nano-client
 yarn add accept-nano-client
 ```
 
-### Directly in Browser, as an UMD module
+### Directly in Browser, as a UMD module
 
 After the _accept-nano-client_ script is loaded there will be a global variable called _acceptNano_, which you can access via `window.acceptNano`
 
@@ -41,10 +41,12 @@ After the _accept-nano-client_ script is loaded there will be a global variable 
 To be able to initiate the payment process, you **must create a new payment session.**
 
 ```ts
-const session = acceptNano.createSession({
-  apiURL: 'api.myAcceptNanoServer.com',
-  pollInterval: 1500,
-})
+type CreateSessionParams = {
+  apiURL: string // the URL of your Accept NANO server
+  pollInterval?: number // time interval (ms) to re-check for verification of a payment
+}
+
+const session = acceptNano.createSession({ apiURL: 'api.myAcceptNanoServer.com' })
 
 // register your event listeners to shape-up the logic based on session events.
 session.once('start', () => { ... })
@@ -61,9 +63,15 @@ After creating your session and attaching the event listeners, you can follow on
 If you want to create and verify an _accept-nano_ payment in your client application, you can use this option.
 
 ```ts
+type CreatePaymentParams = {
+  amount: string // stringified number
+  currency: 'NANO' | 'USD'
+  state?: string // payload to share between your client and server, will be embedded into the payment object
+}
+
 session.createPayment({
   amount: '1',
-  currenct: 'USD',
+  currency: 'USD',
   state: '{userId:7}',
 })
 ```
@@ -72,10 +80,14 @@ After the payment is created, the client will automatically proceed to the verif
 
 #### Option 2: Verify a Payment Through Client
 
-If you create an _accept-nano_ payment in another context (such as your application's backend), you can use this option to perform the verification on client.
+If you create an _accept-nano_ payment in another context (such as your application's backend), you can use this option to perform the verification on the client.
 
 ```ts
-session.verifyPayment('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
+type VerifyPaymentParams = {
+  token: string // the payment token created in your application's backend
+}
+
+session.verifyPayment({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' })
 ```
 
 ## Contributing

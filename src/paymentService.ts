@@ -149,7 +149,9 @@ export const createPaymentService = ({
         invoke: {
           src: (_context, event) =>
             api
-              .fetchPayment((event as StartPaymentVerificationEvent).token)
+              .fetchPayment({
+                token: (event as StartPaymentVerificationEvent).token,
+              })
               .then(response => response.data),
           onDone: {
             target: 'verification',
@@ -171,7 +173,7 @@ export const createPaymentService = ({
             await delay(pollInterval)
 
             const { token } = context.payment as AcceptNanoPayment
-            const { data } = await api.fetchPayment(token)
+            const { data } = await api.fetchPayment({ token })
 
             if (data.merchantNotified) {
               return callback({ type: 'PAYMENT_VERIFIED', payment: data })

@@ -9,12 +9,12 @@ import { createAPI } from './api'
 import { createDOM } from './dom'
 import { createPaymentService } from './paymentService'
 
-export type PaymentSessionConfig = {
+type PaymentSessionConfig = {
   apiURL: string
-  pollInterval: number
+  pollInterval?: number
 }
 
-export type PaymentSessionEvents = {
+type PaymentSessionEvents = {
   start: () => void
   success: (payment: AcceptNanoPayment) => void
   failure: (reason: AcceptNanoPaymentFailureReason) => void
@@ -22,7 +22,7 @@ export type PaymentSessionEvents = {
 
 export const createPaymentSession = ({
   apiURL,
-  pollInterval,
+  pollInterval = 1500,
 }: PaymentSessionConfig) => {
   const eventEmitter = new EventEmitter<PaymentSessionEvents>()
   const api = createAPI({ baseURL: apiURL })
@@ -61,7 +61,7 @@ export const createPaymentSession = ({
     createPayment: (params: CreateAcceptNanoPaymentParams) => {
       paymentService.send({ type: 'CREATE_PAYMENT', params })
     },
-    verifyPayment: (token: AcceptNanoPaymentToken) => {
+    verifyPayment: ({ token }: { token: AcceptNanoPaymentToken }) => {
       paymentService.send({ type: 'START_PAYMENT_VERIFICATION', token })
     },
   }

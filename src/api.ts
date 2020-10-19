@@ -26,7 +26,7 @@ export const createAPI = ({ baseURL }: { baseURL: string }) => {
       return instance.post<AcceptNanoPayment>('/pay', form)
     },
 
-    fetchPayment: (token: AcceptNanoPaymentToken) => {
+    fetchPayment: ({ token }: { token: AcceptNanoPaymentToken }) => {
       return instance.get<AcceptNanoPayment>('/verify', {
         params: {
           token,
