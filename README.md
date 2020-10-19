@@ -1,59 +1,93 @@
 # accept-nano-client
 
 [![Build Status](https://travis-ci.org/accept-nano/accept-nano-client.svg?branch=master)](https://travis-ci.org/accept-nano/accept-nano-client)
+[![Coverage Status](https://coveralls.io/repos/github/accept-nano/accept-nano-client/badge.svg?branch=master)](https://coveralls.io/github/accept-nano/accept-nano-client?branch=master)
+![npm (scoped)](https://img.shields.io/npm/v/@accept-nano/client)
+![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@accept-nano/client)
+![GitHub](https://img.shields.io/github/license/accept-nano/accept-nano-client)
 
 Payment gateway for [NANO](https://nano.org)
 
-_accept-nano-client_ is a JavaScript library that helps you to communicate with [accept-nano](https://github.com/accept-nano/accept-nano) server for receiving NANO payments easily.
-
-Cross-browser compatibility is tested with [BrowserStack](https://browserstack.com), thanks to their sponsorship.
+_accept-nano-client_ is a JavaScript package that helps you to communicate with [_accept-nano_](https://github.com/accept-nano/accept-nano) for receiving NANO payments easily in your client-side applications.
 
 ## Installing
 
-_accept-nano-client_ is pushed to npm on each tagged build, so you can easily include it by inserting a script tag into your <HEAD> part of the HTML page, like this:
+### via NPM
+
+```bash
+npm install accept-nano-client
+
+yarn add accept-nano-client
+```
+
+### Directly in Browser, as a UMD module
+
+After the _accept-nano-client_ script is loaded there will be a global variable called _acceptNano_, which you can access via `window.acceptNano`
 
 ```HTML
 <html>
-    <head>
-        ...
-        <script src="https://unpkg.com/@accept-nano/client"></script>
-    </head>
+  <head>
     ...
+    <script src="https://unpkg.com/@accept-nano/client"></script>
+  </head>
+  ...
 </html>
 ```
 
-## Usage
+## Using
 
-After the _accept-nano-client_ script is loaded there will be a global variable called _acceptNano_, which is an instance of our primary AcceptNano class and will be used for communicating your server, starting and controlling payment sessions.
+### Creating a Payment Session
 
-### Setting up the Client
+To be able to initiate the payment process, you **must create a new payment session.**
 
-Before initiating the payment process, you **must** configure the _acceptNano_ instance by using the following method and parameters:
+```ts
+type CreateSessionParams = {
+  apiURL: string // the URL of your Accept NANO server
+  pollInterval?: number // time interval (ms) to re-check for verification of a payment
+}
 
-```JS
-window.acceptNano.setup({
-    apiURL: 'api.myAcceptNanoServer.com', // URL of your Accept NANO server (String, required)
-    debug: false, // used for enabling debug mode, (Bool, non-required, false by default)
-    pollInterval: 1500, // time period (ms) to check for verification of the payment sessions (Number, non-required, 1500 by default)
+const session = acceptNano.createSession({ apiURL: 'api.myAcceptNanoServer.com' })
+
+// register your event listeners to shape-up the logic based on session events.
+session.once('start', () => { ... })
+session.once('success', (payment: AcceptNanoPayment) => { ... })
+session.once('failure', (reason: AcceptNanoPaymentFailureReason) => { ... })
+```
+
+### Presenting the Payment Overlay
+
+After creating your session and attaching the event listeners, you can follow one of those options to proceed with the payment flow.
+
+#### Option 1: Create a Payment Through Client
+
+If you want to create and verify an _accept-nano_ payment in your client application, you can use this option.
+
+After the payment is created, the client will automatically proceed to the verification step.
+
+```ts
+type CreatePaymentParams = {
+  amount: string // stringified number
+  currency: 'NANO' | 'USD'
+  state?: string // payload to share between your client and server, will be embedded into the payment object
+}
+
+session.createPayment({
+  amount: '1',
+  currency: 'USD',
+  state: '{userId:7}',
 })
 ```
 
-### Initiating Payment Session
+#### Option 2: Verify a Payment Through Client
 
-After you configure the acceptNano instance, you can initiate a payment session by using the following:
+If you create an _accept-nano_ payment in another context (such as your application's backend), you can use this option to perform the verification on the client.
 
-```JS
-window.acceptNano.startPayment({
-    data: {
-        amount: '10' // (String, required)
-        currency: 'USD' // (String, required, 'USD' or 'nano')
-        state: '{userId:7}' // State to share between client and server, (String, non-required)
-    },
-    onStart: (paymentData) => {} // Function, fired when the payment session starts
-    onSuccess: (paymentData) => {} // Function, fired when the payment session completed succesfully
-    onFailure: (failureReason) => {} // Function, fired when the payment session fails
-    onCancel: () => {} // Function, fired when the payment session is cancelled by the user
-})
+```ts
+type VerifyPaymentParams = {
+  token: string // the payment token created in your application's backend
+}
+
+session.verifyPayment({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' })
 ```
 
 ## Contributing
@@ -65,3 +99,11 @@ window.acceptNano.startPayment({
 
 - [Put.io](https://put.io)
 - [My Nano Ninja](https://mynano.ninja)
+
+Please send a PR to list your site if _accept-nano_ is helping you to receive NANO payments.
+
+## Sponsors
+
+[![Browserstack](http://wallpapers-for-ipad.com/fullpage/imgs3/logos/browserstack3.png)](http://www.browserstack.com/)
+
+Cross-browser compatibility is tested with [BrowserStack](https://browserstack.com), thanks for [supporting open source](https://www.browserstack.com/open-source) ❤️️

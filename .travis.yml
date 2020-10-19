@@ -1,14 +1,21 @@
-dist: trusty
 language: node_js
+
 node_js:
-  - '9'
-script: npm run build
+  - '12.13'
+
+script:
+  - yarn lint
+  - yarn test
+  - yarn build
+  - yarn coveralls
+
 deploy:
-  provider: npm
+  edge: true
   skip_cleanup: true
+  provider: npm
   email: altay.aydemir@gmail.com
+  api_key:
+    secure: 1H5FDVMqtLg0i4t7YZRsWBACGaMoofLx46eHxjNbD4vPYO3lSUN5AjeM0ANZhWwy5sKOau56O938Ezmbp1GGZr/VeNi7r9KwfSa7uJYguX433uBReI4LKHb+ipI/sudfPBktfy9Iah21Xy4mbNh0PmsPiXRIOPEApY7EBSxuojS6qV2gkzp3Zlhztya01yl9kkb5z+T6OEWQY+Vd3LPWpwBZGUj9fC09dnbTK73aM4WbD2dCXpB2eWkGG0bLbGemBEeJhybHocH5YPjE8OlkoP8+LCXJcrJqMoEzNMtR32s6SkFO1jdvebUFN25PebdKCeoQmqQoNdxGizy85mb3vxHBPWVaf8iliWS7jIlNA4fSxqrqQEtqnrLErohAnwASctRdqO6wxODsiVjb6Pnd5Do63XptzRkJkzRvUeQDx+J83808j3P0kPEavsKpxPvVUsjLrZ9sKbBtZODets3D81UxumqZU3wD7o16ZY/FPM2Lj1sYEm7iqg4YsQCG7vlGPwnyurQSKDaWLThPe+H7WhYrJpLZAuIYM2xGadaD7cwEUB2fRuqd34RWyTOpNotDxi68vMlbta4Ra05eIkZz5UbgUqEGkbqS4JXQXOkFUjgdD/QxieUtmRlrM42+nJcmOW7JnkQY1g2MAqBnOEaWmg/hU7ghtI1NUOFPvJr81zo=
   on:
     tags: true
     repo: accept-nano/accept-nano-client
-  api_key:
-    secure: 1H5FDVMqtLg0i4t7YZRsWBACGaMoofLx46eHxjNbD4vPYO3lSUN5AjeM0ANZhWwy5sKOau56O938Ezmbp1GGZr/VeNi7r9KwfSa7uJYguX433uBReI4LKHb+ipI/sudfPBktfy9Iah21Xy4mbNh0PmsPiXRIOPEApY7EBSxuojS6qV2gkzp3Zlhztya01yl9kkb5z+T6OEWQY+Vd3LPWpwBZGUj9fC09dnbTK73aM4WbD2dCXpB2eWkGG0bLbGemBEeJhybHocH5YPjE8OlkoP8+LCXJcrJqMoEzNMtR32s6SkFO1jdvebUFN25PebdKCeoQmqQoNdxGizy85mb3vxHBPWVaf8iliWS7jIlNA4fSxqrqQEtqnrLErohAnwASctRdqO6wxODsiVjb6Pnd5Do63XptzRkJkzRvUeQDx+J83808j3P0kPEavsKpxPvVUsjLrZ9sKbBtZODets3D81UxumqZU3wD7o16ZY/FPM2Lj1sYEm7iqg4YsQCG7vlGPwnyurQSKDaWLThPe+H7WhYrJpLZAuIYM2xGadaD7cwEUB2fRuqd34RWyTOpNotDxi68vMlbta4Ra05eIkZz5UbgUqEGkbqS4JXQXOkFUjgdD/QxieUtmRlrM42+nJcmOW7JnkQY1g2MAqBnOEaWmg/hU7ghtI1NUOFPvJr81zo=
