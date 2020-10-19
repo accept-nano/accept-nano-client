@@ -1,4 +1,4 @@
-import { el } from 'redom'
+import { el, setChildren } from 'redom'
 import Big from 'big.js'
 import QRCode from 'qrcode'
 import { AcceptNanoPayment } from '../../types'
@@ -47,19 +47,30 @@ const createQRCodeElements = (payment: AcceptNanoPayment) => {
     `,
   })
 
-  return { qrText, qrCanvas } as const
+  const qrContainer = el('a', {
+    href: qrText,
+    target: '_blank',
+    rel: 'noopener',
+    style: `
+      display: inline-block!important;
+      text-decoration: none!important;
+    `,
+  })
+
+  return { qrText, qrCanvas, qrContainer } as const
 }
 
 export const createPaymentScene = (payment: AcceptNanoPayment) =>
   new Promise<HTMLDivElement>(resolve => {
     const paymentInfo = createPaymentInfo(payment)
-    const { qrText, qrCanvas } = createQRCodeElements(payment)
+    const { qrText, qrCanvas, qrContainer } = createQRCodeElements(payment)
 
     QRCode.toCanvas(qrCanvas, qrText, (error: unknown) => {
       if (error) {
         return resolve(paymentInfo)
       }
 
-      resolve(el('div', [qrCanvas, paymentInfo]))
+      setChildren(qrContainer, [qrCanvas])
+      resolve(el('div', [qrContainer, paymentInfo]))
     })
   })
