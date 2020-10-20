@@ -1,6 +1,6 @@
 import { el, setChildren, mount, unmount, setStyle } from 'redom'
 import { EventEmitter } from '@byungi/event-emitter'
-import { AcceptNanoPayment, AcceptNanoPaymentFailureReason } from '../types'
+import { AcceptNanoPayment, PaymentError } from '../types'
 import { containerStyle, bodyStyle, contentStyle, colors } from './style'
 import { createHeader } from './elements/header'
 import { createStatusBar } from './elements/statusBar'
@@ -93,7 +93,7 @@ export const createDOM = () => {
       setChildren(container, [main])
     },
 
-    renderFailure: (reason: AcceptNanoPaymentFailureReason) => {
+    renderFailure: (error: PaymentError) => {
       // @TODO: maybe create a new state machine for this?
       if (scene === 'failure') return
       scene = 'failure'
@@ -108,7 +108,7 @@ export const createDOM = () => {
       // configure content
       setChildren(content, [
         createFailureScene({
-          reason,
+          error,
           onClose: handleCloseButtonClick,
         }),
       ])

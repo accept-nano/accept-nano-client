@@ -1,12 +1,12 @@
 import { el } from 'redom'
-import { AcceptNanoPaymentFailureReason } from '../../types'
+import { PaymentError } from '../../types'
 import { sharedStyles, colors } from '../style'
 
 export const createFailureScene = ({
-  reason,
+  error,
   onClose,
 }: {
-  reason: AcceptNanoPaymentFailureReason
+  error: PaymentError
   onClose: () => void
 }) => {
   const title = el('h2', { style: sharedStyles.titleHeader }, 'Oops!')
@@ -14,7 +14,7 @@ export const createFailureScene = ({
   const message = el(
     'p',
     { style: sharedStyles.messageBody },
-    `An error occurred: ${reason.type}`,
+    `An error occurred: ${error.reason}`,
   )
 
   const button = el(
