@@ -79,8 +79,8 @@
 
       <label>Currency</label>
       <select name="currency">
-        <option value="nano">nano</option>
-        <option value="usd">USD</option>
+        <option value="NANO">NANO</option>
+        <option value="USD">USD</option>
       </select>
 
       <label>State</label>
@@ -98,19 +98,18 @@
 
       const session = window.acceptNano.createSession({
         apiURL: form.apiURL.value,
-        pollInterval: 1000,
       })
 
       session.on('start', () => {
-        console.log('CLIENT EVENT: started')
+        console.log('CLIENT EVENT: start')
       })
 
-      session.on('succes', (payment) => {
-        console.log('CLIENT EVENT: success', payment)
-      })
+      session.on('end', (error, payment) => {
+        if (error) {
+          return console.log('CLIENT EVENT: end (error)', error)
+        }
 
-      session.on('failure', (reason) => {
-        console.log('CLIENT EVENT: failure', reason)
+        console.log('CLIENT EVENT: end (success)', payment)
       })
 
       session.createPayment({

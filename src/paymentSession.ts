@@ -2,8 +2,8 @@ import { EventEmitter } from '@byungi/event-emitter'
 import {
   AcceptNanoPayment,
   AcceptNanoPaymentToken,
-  AcceptNanoPaymentFailureReason,
   CreateAcceptNanoPaymentParams,
+  PaymentError,
 } from './types'
 import { createAPI } from './api'
 import { createDOM } from './dom'
@@ -16,8 +16,7 @@ type PaymentSessionConfig = {
 
 type PaymentSessionEvents = {
   start: () => void
-  success: (payment: AcceptNanoPayment) => void
-  failure: (reason: AcceptNanoPaymentFailureReason) => void
+  end: (error: PaymentError | null, payment: AcceptNanoPayment | null) => void
 }
 
 export const createPaymentSession = ({
@@ -41,12 +40,12 @@ export const createPaymentSession = ({
 
       if (state.matches('success')) {
         dom.renderSuccess()
-        eventEmitter.emit('success', state.context.payment)
+        eventEmitter.emit('end', null, state.context.payment)
       }
 
-      if (state.matches('error')) {
+      if (state.matches('failure')) {
         dom.renderFailure(state.context.error)
-        eventEmitter.emit('failure', state.context.error)
+        eventEmitter.emit('end', state.context.error, null)
       }
     })
     .start()

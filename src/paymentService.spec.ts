@@ -55,9 +55,9 @@ describe('paymentService', () => {
         pollInterval: 100,
       })
         .onTransition(state => {
-          if (state.matches('error')) {
+          if (state.matches('failure')) {
             expect(mockAPI.createPayment).toBeCalledTimes(1)
-            expect(state.context.error?.type).toBe('NETWORK_ERROR')
+            expect(state.context.error?.reason).toBe('NETWORK_ERROR')
             done()
           }
         })
@@ -112,9 +112,9 @@ describe('paymentService', () => {
             mockFetchPayment.mockRejectedValueOnce(new Error('Network Error!'))
           }
 
-          if (state.matches('error')) {
+          if (state.matches('failure')) {
             expect(mockAPI.fetchPayment).toBeCalledTimes(2)
-            expect(state.context.error?.type).toBe('NETWORK_ERROR')
+            expect(state.context.error?.reason).toBe('NETWORK_ERROR')
             done()
           }
         })
@@ -137,8 +137,8 @@ describe('paymentService', () => {
           paymentService.send({ type: 'TERMINATE' })
         }
 
-        if (state.matches('error')) {
-          expect(state.context.error?.type).toBe('USER_TERMINATED')
+        if (state.matches('failure')) {
+          expect(state.context.error?.reason).toBe('USER_TERMINATED')
           done()
         }
       })
@@ -163,8 +163,8 @@ describe('paymentService', () => {
       pollInterval: 100,
     })
       .onTransition(state => {
-        if (state.matches('error')) {
-          expect(state.context.error?.type).toBe('SESSION_EXPIRED')
+        if (state.matches('failure')) {
+          expect(state.context.error?.reason).toBe('SESSION_EXPIRED')
           done()
         }
       })

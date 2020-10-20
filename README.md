@@ -41,17 +41,36 @@ After the _accept-nano-client_ script is loaded there will be a global variable 
 To be able to initiate the payment process, you **must create a new payment session.**
 
 ```ts
+// 1- create a new payment session
 type CreateSessionParams = {
   apiURL: string // the URL of your Accept NANO server
   pollInterval?: number // time interval (ms) to re-check for verification of a payment
 }
 
-const session = acceptNano.createSession({ apiURL: 'api.myAcceptNanoServer.com' })
+const session = acceptNano.createSession({
+  apiURL: 'api.myAcceptNanoServer.com',
+})
 
-// register your event listeners to shape-up the logic based on session events.
-session.once('start', () => { ... })
-session.once('success', (payment: AcceptNanoPayment) => { ... })
-session.once('failure', (reason: AcceptNanoPaymentFailureReason) => { ... })
+// 2- register event listeners to shape-up your logic based on session events.
+type PaymentSessionEvents = {
+  start: () => void
+  end: (error: PaymentError | null, payment: AcceptNanoPayment | null) => void
+}
+
+session.on('start', () => {
+  myApp.paymentStarted()
+})
+
+session.on('end', (error, payment) => {
+  if (error) {
+    return myApp.paymentFailed({ reason: error.reason })
+  }
+
+  return myApp.paymentSucceeded({
+    amount: payment.amount,
+    state: payment.state,
+  })
+})
 ```
 
 ### Presenting the Payment Overlay

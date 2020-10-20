@@ -39,7 +39,7 @@ describe('createPaymentSession', () => {
 
       const paymentSession = createPaymentSession(mockSessionConfig)
 
-      paymentSession.on('success', payment => {
+      paymentSession.on('end', (_error, payment) => {
         expect(payment).toEqual(mockCompletedAcceptNanoPayment)
         done()
       })
@@ -62,7 +62,7 @@ describe('createPaymentSession', () => {
 
       const paymentSession = createPaymentSession(mockSessionConfig)
 
-      paymentSession.on('success', payment => {
+      paymentSession.on('end', (_error, payment) => {
         expect(payment).toEqual(mockCompletedAcceptNanoPayment)
         done()
       })
@@ -82,8 +82,8 @@ describe('createPaymentSession', () => {
         })
       })
 
-      paymentSession.on('failure', reason => {
-        expect(reason.type).toBe('USER_TERMINATED')
+      paymentSession.on('end', (error, _payment) => {
+        expect(error && error.reason).toBe('USER_TERMINATED')
         done()
       })
 

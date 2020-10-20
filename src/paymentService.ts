@@ -11,13 +11,13 @@ import { delay } from './utils'
 import {
   AcceptNanoPayment,
   AcceptNanoPaymentToken,
-  AcceptNanoPaymentFailureReason,
   CreateAcceptNanoPaymentParams,
+  PaymentError,
 } from './types'
 
 type PaymentContext = {
   payment?: AcceptNanoPayment
-  error?: AcceptNanoPaymentFailureReason
+  error?: PaymentError
 }
 
 type CreatePaymentEvent = {
@@ -77,8 +77,8 @@ type PaymentState =
       context: PaymentContext & { payment: AcceptNanoPayment; error: undefined }
     }
   | {
-      value: 'error'
-      context: PaymentContext & { error: AcceptNanoPaymentFailureReason }
+      value: 'failure'
+      context: PaymentContext & { error: PaymentError }
     }
 
 export const createPaymentService = ({
@@ -96,13 +96,13 @@ export const createPaymentService = ({
   })
 
   const setPaymentError = assign<PaymentContext, DoneInvokeEvent<AxiosError>>({
-    error: (_, event) => ({ type: 'NETWORK_ERROR', error: event }),
+    error: (_, event) => ({ reason: 'NETWORK_ERROR', details: event.data }),
   })
 
-  const sharedTerminateHandler = {
-    target: 'error',
+  const handleTerminate = {
+    target: 'failure',
     actions: assign<PaymentContext, TerminatePaymentEvent>({
-      error: { type: 'USER_TERMINATED' },
+      error: { reason: 'USER_TERMINATED' },
     }),
   }
 
@@ -136,12 +136,12 @@ export const createPaymentService = ({
             actions: setPaymentData,
           },
           onError: {
-            target: 'error',
+            target: 'failure',
             actions: setPaymentError,
           },
         },
         on: {
-          TERMINATE: sharedTerminateHandler,
+          TERMINATE: handleTerminate,
         },
       },
 
@@ -158,12 +158,12 @@ export const createPaymentService = ({
             actions: setPaymentData,
           },
           onError: {
-            target: 'error',
+            target: 'failure',
             actions: setPaymentError,
           },
         },
         on: {
-          TERMINATE: sharedTerminateHandler,
+          TERMINATE: handleTerminate,
         },
       },
 
@@ -190,7 +190,7 @@ export const createPaymentService = ({
             actions: setPaymentData,
           },
           onError: {
-            target: 'error',
+            target: 'failure',
             actions: setPaymentError,
           },
         },
@@ -203,12 +203,12 @@ export const createPaymentService = ({
             }),
           },
           PAYMENT_SESSION_EXPIRED: {
-            target: 'error',
+            target: 'failure',
             actions: assign<PaymentContext, PaymentSessionExpiredEvent>({
-              error: { type: 'SESSION_EXPIRED' },
+              error: { reason: 'SESSION_EXPIRED' },
             }),
           },
-          TERMINATE: sharedTerminateHandler,
+          TERMINATE: handleTerminate,
         },
       },
 
@@ -216,7 +216,7 @@ export const createPaymentService = ({
         type: 'final',
       },
 
-      error: {
+      failure: {
         type: 'final',
       },
     },
