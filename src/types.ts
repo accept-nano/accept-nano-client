@@ -1,11 +1,6 @@
 type StringifiedNumber = string
 type StringifiedObject = string
 
-export type PaymentSessionConfig = {
-  apiURL: string
-  pollInterval?: number
-}
-
 export type NanoAccount = string
 export type AcceptNanoPaymentToken = string
 export type AcceptNanoCurrency = 'NANO' | 'USD'

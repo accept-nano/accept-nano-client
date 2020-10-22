@@ -9,8 +9,12 @@ import {
   clearDOM,
 } from './test-utils'
 
+export const mockSessionConfig = {
+  apiURL: mockAPIURL,
+  pollInterval: 100,
+}
+
 describe('createPaymentSession', () => {
-  const sessionConfig = { apiURL: mockAPIURL, pollInterval: 100 }
   const { token, amount, currency } = mockAcceptNanoPayment
   const mock = new MockAdapter(axios)
 
@@ -33,7 +37,7 @@ describe('createPaymentSession', () => {
         .onGet(`${mockAPIURL}/verify`)
         .reply(200, mockCompletedAcceptNanoPayment)
 
-      const paymentSession = createPaymentSession(sessionConfig)
+      const paymentSession = createPaymentSession(mockSessionConfig)
 
       paymentSession.on('end', (_error, payment) => {
         expect(payment).toEqual(mockCompletedAcceptNanoPayment)
@@ -56,7 +60,7 @@ describe('createPaymentSession', () => {
         .onGet(`${mockAPIURL}/verify`)
         .reply(200, mockCompletedAcceptNanoPayment)
 
-      const paymentSession = createPaymentSession(sessionConfig)
+      const paymentSession = createPaymentSession(mockSessionConfig)
 
       paymentSession.on('end', (_error, payment) => {
         expect(payment).toEqual(mockCompletedAcceptNanoPayment)
@@ -69,7 +73,7 @@ describe('createPaymentSession', () => {
     it('dispatches cancel event if close button is clicked during the verification', done => {
       mock.onGet(`${mockAPIURL}/verify`).reply(200, mockAcceptNanoPayment)
 
-      const paymentSession = createPaymentSession(sessionConfig)
+      const paymentSession = createPaymentSession(mockSessionConfig)
 
       paymentSession.on('start', async () => {
         await waitFor(() => {

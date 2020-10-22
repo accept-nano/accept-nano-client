@@ -1,45 +1,41 @@
 import { createPaymentService } from './paymentService'
+import { API } from './api'
 import {
-  createMockAPIResponse,
+  createMockAPIResponseWithPayment,
   mockAcceptNanoPayment,
-  mockAPIURL,
 } from './test-utils'
 
-const mockCreatePayment = jest.fn(async () => createMockAPIResponse())
-const mockFetchPayment = jest.fn(async () => createMockAPIResponse())
-
-jest.mock('./api', () => ({
-  createAPI: () => ({
-    createPayment: mockCreatePayment,
-    fetchPayment: mockFetchPayment,
-  }),
-}))
+const mockAPI: API = {
+  createPayment: jest.fn(async () => createMockAPIResponseWithPayment()),
+  fetchPayment: jest.fn(async () => createMockAPIResponseWithPayment()),
+}
 
 describe('paymentService', () => {
-  const paymentServiceConfig = {
-    apiURL: mockAPIURL,
-    pollInterval: 100,
-  }
+  const mockFetchPayment = mockAPI.fetchPayment as jest.Mock
+  const mockCreatePayment = mockAPI.createPayment as jest.Mock
 
   afterEach(jest.clearAllMocks)
 
   describe('createPayment flow', () => {
     it('creates a payment session through API and transitions to verification state', done => {
       mockFetchPayment.mockResolvedValueOnce(
-        createMockAPIResponse({
+        createMockAPIResponseWithPayment({
           ...mockAcceptNanoPayment,
           merchantNotified: true,
         }),
       )
 
-      const paymentService = createPaymentService(paymentServiceConfig)
+      const paymentService = createPaymentService({
+        api: mockAPI,
+        pollInterval: 100,
+      })
         .onTransition(state => {
           if (state.matches('verification')) {
-            expect(mockCreatePayment).toBeCalledTimes(1)
+            expect(mockAPI.createPayment).toBeCalledTimes(1)
           }
 
           if (state.matches('success')) {
-            expect(mockFetchPayment).toBeCalledTimes(1)
+            expect(mockAPI.fetchPayment).toBeCalledTimes(1)
             done()
           }
         })
@@ -54,10 +50,13 @@ describe('paymentService', () => {
     it('transitions to error state if payment creation fails', done => {
       mockCreatePayment.mockRejectedValueOnce(new Error('Network Error!'))
 
-      const paymentService = createPaymentService(paymentServiceConfig)
+      const paymentService = createPaymentService({
+        api: mockAPI,
+        pollInterval: 100,
+      })
         .onTransition(state => {
           if (state.matches('failure')) {
-            expect(mockCreatePayment).toBeCalledTimes(1)
+            expect(mockAPI.createPayment).toBeCalledTimes(1)
             expect(state.context.error?.reason).toBe('NETWORK_ERROR')
             done()
           }
@@ -73,14 +72,17 @@ describe('paymentService', () => {
 
   describe('verifyPayment flow', () => {
     it('starts verifying a payment through API and transitions to success state', done => {
-      const paymentService = createPaymentService(paymentServiceConfig)
+      const paymentService = createPaymentService({
+        api: mockAPI,
+        pollInterval: 100,
+      })
         .onTransition(state => {
           if (
             state.matches('verification') &&
             mockFetchPayment.mock.calls.length === 2
           ) {
             mockFetchPayment.mockResolvedValueOnce(
-              createMockAPIResponse({
+              createMockAPIResponseWithPayment({
                 ...mockAcceptNanoPayment,
                 merchantNotified: true,
               }),
@@ -101,14 +103,17 @@ describe('paymentService', () => {
     })
 
     it('starts verifying a payment through API and transitions to failure state', done => {
-      const paymentService = createPaymentService(paymentServiceConfig)
+      const paymentService = createPaymentService({
+        api: mockAPI,
+        pollInterval: 100,
+      })
         .onTransition(state => {
           if (state.matches('verification')) {
             mockFetchPayment.mockRejectedValueOnce(new Error('Network Error!'))
           }
 
           if (state.matches('failure')) {
-            expect(mockFetchPayment).toBeCalledTimes(2)
+            expect(mockAPI.fetchPayment).toBeCalledTimes(2)
             expect(state.context.error?.reason).toBe('NETWORK_ERROR')
             done()
           }
@@ -123,7 +128,10 @@ describe('paymentService', () => {
   })
 
   it('cancels ongoing flow if TERMINATE action has been sent', done => {
-    const paymentService = createPaymentService(paymentServiceConfig)
+    const paymentService = createPaymentService({
+      api: mockAPI,
+      pollInterval: 100,
+    })
       .onTransition(state => {
         if (state.matches('creation')) {
           paymentService.send({ type: 'TERMINATE' })
@@ -144,13 +152,16 @@ describe('paymentService', () => {
 
   it('cancels ongoing flow if payment session is expired', done => {
     mockFetchPayment.mockResolvedValueOnce(
-      createMockAPIResponse({
+      createMockAPIResponseWithPayment({
         ...mockAcceptNanoPayment,
         remainingSeconds: 0,
       }),
     )
 
-    const paymentService = createPaymentService(paymentServiceConfig)
+    const paymentService = createPaymentService({
+      api: mockAPI,
+      pollInterval: 100,
+    })
       .onTransition(state => {
         if (state.matches('failure')) {
           expect(state.context.error?.reason).toBe('SESSION_EXPIRED')
