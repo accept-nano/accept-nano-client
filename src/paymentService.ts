@@ -6,13 +6,14 @@ import {
   DoneInvokeEvent,
   Sender,
 } from 'xstate'
-import { API } from './api'
+import { createAPI } from './api'
 import { delay } from './utils'
 import {
   AcceptNanoPayment,
   AcceptNanoPaymentToken,
   CreateAcceptNanoPaymentParams,
   PaymentError,
+  PaymentSessionConfig,
 } from './types'
 
 type PaymentContext = {
@@ -81,29 +82,34 @@ type PaymentState =
       context: PaymentContext & { error: PaymentError }
     }
 
-export const createPaymentService = ({
-  api,
-  pollInterval,
-}: {
-  api: API
+type PaymentServiceConfig = PaymentSessionConfig & {
   pollInterval: number
-}) => {
-  const setPaymentData = assign<
-    PaymentContext,
-    DoneInvokeEvent<AcceptNanoPayment>
-  >({
-    payment: (_, event) => event.data,
-  })
+}
 
-  const setPaymentError = assign<PaymentContext, DoneInvokeEvent<AxiosError>>({
-    error: (_, event) => ({ reason: 'NETWORK_ERROR', details: event.data }),
-  })
+export const createPaymentService = ({
+  apiURL,
+  pollInterval,
+}: PaymentServiceConfig) => {
+  const api = createAPI({ baseURL: apiURL })
 
-  const handleTerminate = {
-    target: 'failure',
-    actions: assign<PaymentContext, TerminatePaymentEvent>({
-      error: { reason: 'USER_TERMINATED' },
+  const paymentMachineActions = {
+    setPaymentData: assign<PaymentContext, DoneInvokeEvent<AcceptNanoPayment>>({
+      payment: (_, event) => event.data,
     }),
+
+    handleAPIError: {
+      target: 'failure',
+      actions: assign<PaymentContext, DoneInvokeEvent<AxiosError>>({
+        error: (_, event) => ({ reason: 'NETWORK_ERROR', details: event.data }),
+      }),
+    },
+
+    handleTerminate: {
+      target: 'failure',
+      actions: assign<PaymentContext, TerminatePaymentEvent>({
+        error: { reason: 'USER_TERMINATED' },
+      }),
+    },
   }
 
   const paymentMachine = createMachine<
@@ -133,15 +139,12 @@ export const createPaymentService = ({
               .then(response => response.data),
           onDone: {
             target: 'verification',
-            actions: setPaymentData,
+            actions: paymentMachineActions.setPaymentData,
           },
-          onError: {
-            target: 'failure',
-            actions: setPaymentError,
-          },
+          onError: paymentMachineActions.handleAPIError,
         },
         on: {
-          TERMINATE: handleTerminate,
+          TERMINATE: paymentMachineActions.handleTerminate,
         },
       },
 
@@ -155,15 +158,12 @@ export const createPaymentService = ({
               .then(response => response.data),
           onDone: {
             target: 'verification',
-            actions: setPaymentData,
+            actions: paymentMachineActions.setPaymentData,
           },
-          onError: {
-            target: 'failure',
-            actions: setPaymentError,
-          },
+          onError: paymentMachineActions.handleAPIError,
         },
         on: {
-          TERMINATE: handleTerminate,
+          TERMINATE: paymentMachineActions.handleTerminate,
         },
       },
 
@@ -187,12 +187,9 @@ export const createPaymentService = ({
           },
           onDone: {
             target: 'success',
-            actions: setPaymentData,
+            actions: paymentMachineActions.setPaymentData,
           },
-          onError: {
-            target: 'failure',
-            actions: setPaymentError,
-          },
+          onError: paymentMachineActions.handleAPIError,
         },
         on: {
           VERIFY_PAYMENT: 'verification',
@@ -208,7 +205,7 @@ export const createPaymentService = ({
               error: { reason: 'SESSION_EXPIRED' },
             }),
           },
-          TERMINATE: handleTerminate,
+          TERMINATE: paymentMachineActions.handleTerminate,
         },
       },
 

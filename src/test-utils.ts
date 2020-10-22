@@ -21,9 +21,7 @@ export const mockCompletedAcceptNanoPayment: AcceptNanoPayment = {
   merchantNotified: true,
 }
 
-export const createMockAPIResponseWithPayment = (
-  payment = mockAcceptNanoPayment,
-) => ({
+export const createMockAPIResponse = (payment = mockAcceptNanoPayment) => ({
   status: 200,
   statusText: 'OK',
   headers: {},
