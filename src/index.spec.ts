@@ -5,6 +5,8 @@ describe('acceptNano', () => {
     expect(acceptNano).toMatchInlineSnapshot(`
       Object {
         "createSession": [Function],
+        "isAcceptNanoPayment": [Function],
+        "isCompletedAcceptNanoPayment": [Function],
       }
     `)
   })

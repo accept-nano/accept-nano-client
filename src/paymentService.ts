@@ -6,13 +6,14 @@ import {
   DoneInvokeEvent,
   Sender,
 } from 'xstate'
-import { API } from './api'
+import { AcceptNanoAPI } from './api'
 import { delay } from './utils'
 import {
   AcceptNanoPayment,
   AcceptNanoPaymentToken,
   CreateAcceptNanoPaymentParams,
   PaymentError,
+  isCompletedAcceptNanoPayment,
 } from './types'
 
 type PaymentContext = {
@@ -81,13 +82,15 @@ type PaymentState =
       context: PaymentContext & { error: PaymentError }
     }
 
+type PaymentServiceConfig = {
+  api: AcceptNanoAPI
+  pollInterval: number
+}
+
 export const createPaymentService = ({
   api,
   pollInterval,
-}: {
-  api: API
-  pollInterval: number
-}) => {
+}: PaymentServiceConfig) => {
   const setPaymentData = assign<
     PaymentContext,
     DoneInvokeEvent<AcceptNanoPayment>
@@ -175,7 +178,7 @@ export const createPaymentService = ({
             const { token } = context.payment as AcceptNanoPayment
             const { data } = await api.fetchPayment({ token })
 
-            if (data.merchantNotified) {
+            if (isCompletedAcceptNanoPayment(data)) {
               return callback({ type: 'PAYMENT_VERIFIED', payment: data })
             }
 
