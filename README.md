@@ -28,7 +28,7 @@ After the _accept-nano-client_ script is loaded there will be a global variable 
 <html>
   <head>
     ...
-    <script src="https://unpkg.com/@accept-nano/client"></script>
+    <script src="https://unpkg.com/@accept-nano/client@beta"></script>
   </head>
   ...
 </html>
