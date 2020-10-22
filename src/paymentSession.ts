@@ -4,15 +4,10 @@ import {
   AcceptNanoPaymentToken,
   CreateAcceptNanoPaymentParams,
   PaymentError,
+  PaymentSessionConfig,
 } from './types'
-import { createAPI } from './api'
 import { createDOM } from './dom'
 import { createPaymentService } from './paymentService'
-
-type PaymentSessionConfig = {
-  apiURL: string
-  pollInterval?: number
-}
 
 type PaymentSessionEvents = {
   start: () => void
@@ -24,9 +19,8 @@ export const createPaymentSession = ({
   pollInterval = 1500,
 }: PaymentSessionConfig) => {
   const eventEmitter = new EventEmitter<PaymentSessionEvents>()
-  const api = createAPI({ baseURL: apiURL })
   const dom = createDOM()
-  const paymentService = createPaymentService({ api, pollInterval })
+  const paymentService = createPaymentService({ apiURL, pollInterval })
     .onTransition(state => {
       if (state.matches('creation') || state.matches('fetching')) {
         dom.mount()
