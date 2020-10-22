@@ -43,12 +43,13 @@ To be able to initiate the payment process, you **must create a new payment sess
 ```ts
 // 1- create a new payment session
 type CreateSessionParams = {
-  apiURL: string // the URL of your Accept NANO server
+  apiHost: string // host of your Accept NANO server
   pollInterval?: number // time interval (ms) to re-check for verification of a payment
+  debug?: boolean // enables debug mode and prints usefull stuff to console
 }
 
 const session = acceptNano.createSession({
-  apiURL: 'api.myAcceptNanoServer.com',
+  apiHost: 'accept-nano-demo.put.io',
 })
 
 // 2- register event listeners to shape-up your logic based on session events.
