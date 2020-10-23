@@ -6,7 +6,7 @@ describe('acceptNano', () => {
       Object {
         "createSession": [Function],
         "isAcceptNanoPayment": [Function],
-        "isCompletedAcceptNanoPayment": [Function],
+        "isVerifiedAcceptNanoPayment": [Function],
       }
     `)
   })

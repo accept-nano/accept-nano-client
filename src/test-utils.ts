@@ -16,7 +16,7 @@ export const mockAcceptNanoPayment: AcceptNanoPayment = {
   merchantNotified: false,
 }
 
-export const mockCompletedAcceptNanoPayment: AcceptNanoPayment = {
+export const mockVerifiedAcceptNanoPayment: AcceptNanoPayment = {
   ...mockAcceptNanoPayment,
   merchantNotified: true,
 }

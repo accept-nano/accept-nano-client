@@ -2,7 +2,7 @@ import { Server } from 'mock-socket'
 import { createWebSocket, createWebSocketURL } from './webSocket'
 import {
   mockAcceptNanoPayment,
-  mockCompletedAcceptNanoPayment,
+  mockVerifiedAcceptNanoPayment,
 } from './test-utils'
 
 const socketConfig = {
@@ -54,15 +54,15 @@ describe('createWebSocket', () => {
       })
     })
 
-    it('emits `payment_completed` event for completed payments', done => {
+    it('emits `payment_verified` event for verified payments', done => {
       mockServer.on('connection', server => {
-        server.send(JSON.stringify(mockCompletedAcceptNanoPayment))
+        server.send(JSON.stringify(mockVerifiedAcceptNanoPayment))
         server.close()
       })
 
       const socket = createWebSocket(socketConfig.baseURL)
-      socket.on('payment_completed', payment => {
-        expect(payment).toEqual(mockCompletedAcceptNanoPayment)
+      socket.on('payment_verified', payment => {
+        expect(payment).toEqual(mockVerifiedAcceptNanoPayment)
         done()
       })
     })

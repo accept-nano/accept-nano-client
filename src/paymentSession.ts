@@ -55,7 +55,7 @@ export const createPaymentSession = ({
             }),
           )
 
-          ws.on('payment_completed', payment => {
+          ws.on('payment_verified', payment => {
             paymentService.send({ type: 'PAYMENT_VERIFIED', payment })
           })
         }

@@ -7,7 +7,7 @@ import * as webSocket from './webSocket'
 import {
   mockAPIHost,
   mockAcceptNanoPayment,
-  mockCompletedAcceptNanoPayment,
+  mockVerifiedAcceptNanoPayment,
   clearDOM,
 } from './test-utils'
 
@@ -28,19 +28,19 @@ describe('createPaymentSession', () => {
       paymentSession.createPayment({ amount, currency })
     })
 
-    it('dispatches success event once the payment is completed', done => {
+    it('dispatches success event once the payment is verified', done => {
       mock
         .onPost(`https://${mockAPIHost}/api/pay`)
         .reply(200, mockAcceptNanoPayment)
 
       mock
         .onGet(`https://${mockAPIHost}/api/verify`)
-        .reply(200, mockCompletedAcceptNanoPayment)
+        .reply(200, mockVerifiedAcceptNanoPayment)
 
       const paymentSession = createPaymentSession(sessionConfig)
 
       paymentSession.on('end', (_error, payment) => {
-        expect(payment).toEqual(mockCompletedAcceptNanoPayment)
+        expect(payment).toEqual(mockVerifiedAcceptNanoPayment)
         done()
       })
 
@@ -55,22 +55,22 @@ describe('createPaymentSession', () => {
       paymentSession.verifyPayment({ token })
     })
 
-    it('dispatches success event once the payment is completed', done => {
+    it('dispatches success event once the payment is verified', done => {
       mock
         .onGet(`https://${mockAPIHost}/api/verify`)
-        .reply(200, mockCompletedAcceptNanoPayment)
+        .reply(200, mockVerifiedAcceptNanoPayment)
 
       const paymentSession = createPaymentSession(sessionConfig)
 
       paymentSession.on('end', (_error, payment) => {
-        expect(payment).toEqual(mockCompletedAcceptNanoPayment)
+        expect(payment).toEqual(mockVerifiedAcceptNanoPayment)
         done()
       })
 
       paymentSession.verifyPayment({ token })
     })
 
-    it('dispatches success event once the payment is completed -- via websocket event', done => {
+    it('dispatches success event once the payment is verified -- via websocket event', done => {
       // socket-mock doesn't work when we pass a URL with query param, had to mock URL here 😞 //
       const createWebSocketURLSpy = jest.spyOn(webSocket, 'createWebSocketURL')
       createWebSocketURLSpy.mockImplementation(() => `wss://localhost:8080`)
@@ -79,7 +79,7 @@ describe('createPaymentSession', () => {
       const wss = new Server('wss://localhost:8080')
       wss.on('connection', server => {
         setTimeout(() => {
-          server.send(JSON.stringify(mockCompletedAcceptNanoPayment))
+          server.send(JSON.stringify(mockVerifiedAcceptNanoPayment))
           server.close()
         }, sessionConfig.pollInterval * 2)
       })
@@ -91,7 +91,7 @@ describe('createPaymentSession', () => {
       const paymentSession = createPaymentSession(sessionConfig)
 
       paymentSession.on('end', (_error, payment) => {
-        expect(payment).toEqual(mockCompletedAcceptNanoPayment)
+        expect(payment).toEqual(mockVerifiedAcceptNanoPayment)
         done()
       })
 

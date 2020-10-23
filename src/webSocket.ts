@@ -2,7 +2,7 @@ import { EventEmitter } from '@byungi/event-emitter'
 import {
   AcceptNanoPayment,
   isAcceptNanoPayment,
-  isCompletedAcceptNanoPayment,
+  isVerifiedAcceptNanoPayment,
 } from './types'
 import { logger } from './logger'
 
@@ -19,7 +19,7 @@ type AcceptNanoWebSocketEvents = {
   close: () => void
   error: (error: unknown) => void
   payment_updated: (payment: AcceptNanoPayment) => void
-  payment_completed: (payment: AcceptNanoPayment) => void
+  payment_verified: (payment: AcceptNanoPayment) => void
 }
 
 export const createWebSocket = (url: string) => {
@@ -34,8 +34,8 @@ export const createWebSocket = (url: string) => {
       const payload = JSON.parse(event.data)
 
       if (isAcceptNanoPayment(payload)) {
-        return isCompletedAcceptNanoPayment(payload)
-          ? eventEmitter.emit('payment_completed', payload)
+        return isVerifiedAcceptNanoPayment(payload)
+          ? eventEmitter.emit('payment_verified', payload)
           : eventEmitter.emit('payment_updated', payload)
       }
 

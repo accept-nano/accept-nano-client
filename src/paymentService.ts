@@ -13,7 +13,7 @@ import {
   AcceptNanoPaymentToken,
   CreateAcceptNanoPaymentParams,
   PaymentError,
-  isCompletedAcceptNanoPayment,
+  isVerifiedAcceptNanoPayment,
 } from './types'
 
 type PaymentContext = {
@@ -178,7 +178,7 @@ export const createPaymentService = ({
             const { token } = context.payment as AcceptNanoPayment
             const { data } = await api.fetchPayment({ token })
 
-            if (isCompletedAcceptNanoPayment(data)) {
+            if (isVerifiedAcceptNanoPayment(data)) {
               return callback({ type: 'PAYMENT_VERIFIED', payment: data })
             }
 

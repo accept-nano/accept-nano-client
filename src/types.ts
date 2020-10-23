@@ -41,5 +41,5 @@ export const isAcceptNanoPayment = (
   return Boolean(record.token && record.account && record.currency)
 }
 
-export const isCompletedAcceptNanoPayment = (input: unknown) =>
+export const isVerifiedAcceptNanoPayment = (input: unknown) =>
   isAcceptNanoPayment(input) && input.merchantNotified
