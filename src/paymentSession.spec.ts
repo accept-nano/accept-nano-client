@@ -12,7 +12,12 @@ import {
 } from './test-utils'
 
 describe('createPaymentSession', () => {
-  const sessionConfig = { apiHost: mockAPIHost, pollInterval: 100, debug: true }
+  const sessionConfig = {
+    apiHost: mockAPIHost,
+    pollInterval: 100,
+    debug: false,
+  }
+
   const { token, amount, currency } = mockAcceptNanoPayment
   const mock = new MockAdapter(axios)
 
