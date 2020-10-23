@@ -11,7 +11,12 @@ const socketConfig = {
 }
 
 describe('createWebSocket', () => {
-  const mockServer = new Server(socketConfig.baseURL)
+  let mockServer: Server
+
+  beforeEach(() => {
+    mockServer && mockServer.close()
+    mockServer = new Server(socketConfig.baseURL)
+  })
 
   it('emits `open` event', done => {
     mockServer.on('connection', server => {
@@ -74,7 +79,27 @@ describe('createWebSocket', () => {
       })
 
       const socket = createWebSocket(socketConfig.baseURL)
-      socket.on('close', done)
+
+      socket.on('close', () => {
+        done()
+      })
+    })
+
+    it('emits `error` event for unparsable payloads', done => {
+      mockServer.on('connection', server => {
+        server.send(`hello`)
+        server.close()
+      })
+
+      const socket = createWebSocket(socketConfig.baseURL)
+
+      const onError = jest.fn()
+      socket.on('error', onError)
+
+      socket.on('close', () => {
+        expect(onError).toBeCalledTimes(1)
+        done()
+      })
     })
   })
 })

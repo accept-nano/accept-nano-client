@@ -26,9 +26,21 @@ export const createWebSocket = (url: string) => {
   const eventEmitter = new EventEmitter<AcceptNanoWebSocketEvents>()
   const websocket = new WebSocket(url)
 
-  websocket.onopen = () => eventEmitter.emit('open')
-  websocket.onclose = () => eventEmitter.emit('close')
-  websocket.onerror = error => eventEmitter.emit('error', error)
+  websocket.onopen = () => {
+    logger.log('websocket', 'open')
+    eventEmitter.emit('open')
+  }
+
+  websocket.onclose = () => {
+    logger.log('websocket', 'close')
+    eventEmitter.emit('close')
+  }
+
+  websocket.onerror = error => {
+    logger.log('websocket', 'error', error)
+    eventEmitter.emit('error', error)
+  }
+
   websocket.onmessage = event => {
     try {
       const payload = JSON.parse(event.data)
@@ -44,6 +56,8 @@ export const createWebSocket = (url: string) => {
         payload,
       })
     } catch (error) {
+      eventEmitter.emit('error', error)
+
       logger.log('websocket', 'could not deserialize message payload', {
         event,
         error,
