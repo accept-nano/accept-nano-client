@@ -28,7 +28,7 @@ type PaymentSessionConfig = {
 
 export const createPaymentSession = ({
   apiHost,
-  pollInterval = 5_000,
+  pollInterval = 3_000,
   debug = false,
 }: PaymentSessionConfig) => {
   logger.configure({ isEnabled: debug })

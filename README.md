@@ -44,7 +44,7 @@ To be able to initiate the payment process, you **must create a new payment sess
 // 1- create a new payment session
 type CreateSessionParams = {
   apiHost: string // host of your Accept NANO server
-  pollInterval?: number // time interval (ms) to re-check for verification of a payment
+  pollInterval?: number // time interval (ms) to re-check for verification of a payment (default: 3s)
   debug?: boolean // enables debug mode and prints usefull stuff to console
 }
 
