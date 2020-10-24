@@ -10,7 +10,7 @@ Payment gateway for [NANO](https://nano.org)
 
 _accept-nano-client_ is a JavaScript package that helps you to communicate with [_accept-nano_](https://github.com/accept-nano/accept-nano) for receiving NANO payments easily in your client-side applications.
 
-## Installing
+## Installation
 
 ### via NPM
 
@@ -18,6 +18,18 @@ _accept-nano-client_ is a JavaScript package that helps you to communicate with 
 npm install accept-nano-client
 
 yarn add accept-nano-client
+```
+
+#### ES Modules / TypeScript
+
+```ts
+import * as acceptNano from '@accept-nano/client'
+```
+
+#### CommonJS
+
+```ts
+const acceptNano = require('@accept-nano/client')
 ```
 
 ### Directly in Browser, as a UMD module
@@ -34,7 +46,7 @@ After the _accept-nano-client_ script is loaded there will be a global variable 
 </html>
 ```
 
-## Using
+## Usage
 
 ### Creating a Payment Session
 
@@ -43,9 +55,9 @@ To be able to initiate the payment process, you **must create a new payment sess
 ```ts
 // 1- create a new payment session
 type CreateSessionParams = {
-  apiHost: string // host of your Accept NANO server
+  apiHost: string // host of your Accept NANO server, without protocol
   pollInterval?: number // time interval (ms) to re-check for verification of a payment (default: 3s)
-  debug?: boolean // enables debug mode and prints usefull stuff to console
+  debug?: boolean // enables debug mode and prints some useful stuff to console
 }
 
 const session = acceptNano.createSession({
@@ -82,7 +94,7 @@ After creating your session and attaching the event listeners, you can follow on
 
 If you want to create and verify an _accept-nano_ payment in your client application, you can use this option.
 
-After the payment is created, the client will automatically proceed to the verification step.
+After the payment is created, _accept-nano-client_ will automatically proceed to the verification step.
 
 ```ts
 type CreatePaymentParams = {
@@ -100,11 +112,11 @@ session.createPayment({
 
 #### Option 2: Verify a Payment Through Client
 
-If you create an _accept-nano_ payment in another context (such as your application's backend), you can use this option to perform the verification on the client.
+If you create an _accept-nano_ payment in another context (such as your application's backend), you can use this option to perform the verification in your client application.
 
 ```ts
 type VerifyPaymentParams = {
-  token: string // the payment token created in your application's backend
+  token: string // the Accept NANO payment token created in your backend application
 }
 
 session.verifyPayment({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' })
@@ -112,7 +124,7 @@ session.verifyPayment({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' })
 
 ## Contributing
 
-- Please open an issue if you have a question or suggestion.
+- Please [open an issue](https://github.com/accept-nano/accept-nano-client/issues/new) if you have a question or suggestion.
 - Don't create a PR before discussing it first.
 
 ## Who is using _accept-nano-client_ in production?
