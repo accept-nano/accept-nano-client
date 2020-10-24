@@ -1,13 +1,10 @@
 import { createPaymentService } from './paymentService'
-import { API } from './api'
-import {
-  createMockAPIResponseWithPayment,
-  mockAcceptNanoPayment,
-} from './test-utils'
+import { AcceptNanoAPI } from './api'
+import { createMockAPIResponse, mockAcceptNanoPayment } from './test-utils'
 
-const mockAPI: API = {
-  createPayment: jest.fn(async () => createMockAPIResponseWithPayment()),
-  fetchPayment: jest.fn(async () => createMockAPIResponseWithPayment()),
+const mockAPI: AcceptNanoAPI = {
+  createPayment: jest.fn(async () => createMockAPIResponse()),
+  fetchPayment: jest.fn(async () => createMockAPIResponse()),
 }
 
 describe('paymentService', () => {
@@ -19,7 +16,7 @@ describe('paymentService', () => {
   describe('createPayment flow', () => {
     it('creates a payment session through API and transitions to verification state', done => {
       mockFetchPayment.mockResolvedValueOnce(
-        createMockAPIResponseWithPayment({
+        createMockAPIResponse({
           ...mockAcceptNanoPayment,
           merchantNotified: true,
         }),
@@ -82,7 +79,7 @@ describe('paymentService', () => {
             mockFetchPayment.mock.calls.length === 2
           ) {
             mockFetchPayment.mockResolvedValueOnce(
-              createMockAPIResponseWithPayment({
+              createMockAPIResponse({
                 ...mockAcceptNanoPayment,
                 merchantNotified: true,
               }),
@@ -152,7 +149,7 @@ describe('paymentService', () => {
 
   it('cancels ongoing flow if payment session is expired', done => {
     mockFetchPayment.mockResolvedValueOnce(
-      createMockAPIResponseWithPayment({
+      createMockAPIResponse({
         ...mockAcceptNanoPayment,
         remainingSeconds: 0,
       }),

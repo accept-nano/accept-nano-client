@@ -36,4 +36,4 @@ export const createAPI = ({ baseURL }: { baseURL: string }) => {
   }
 }
 
-export type API = ReturnType<typeof createAPI>
+export type AcceptNanoAPI = ReturnType<typeof createAPI>

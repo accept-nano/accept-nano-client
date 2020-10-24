@@ -48,6 +48,7 @@
     "coveralls": "^3.1.0",
     "husky": "^4.3.0",
     "jest-canvas-mock": "^2.3.0",
+    "mock-socket": "^9.0.3",
     "parcel-bundler": "^1.12.4",
     "replace-in-file": "^6.1.0",
     "size-limit": "^4.6.0",

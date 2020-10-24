@@ -8,24 +8,36 @@ import {
 import { createAPI } from './api'
 import { createDOM } from './dom'
 import { createPaymentService } from './paymentService'
-
-type PaymentSessionConfig = {
-  apiURL: string
-  pollInterval?: number
-}
+import { logger } from './logger'
+import {
+  createWebSocket,
+  createWebSocketURL,
+  AcceptNanoWebSocket,
+} from './webSocket'
 
 type PaymentSessionEvents = {
   start: () => void
   end: (error: PaymentError | null, payment: AcceptNanoPayment | null) => void
 }
 
+type PaymentSessionConfig = {
+  apiHost: string
+  pollInterval?: number
+  debug?: boolean
+}
+
 export const createPaymentSession = ({
-  apiURL,
-  pollInterval = 1500,
+  apiHost,
+  pollInterval = 3_000,
+  debug = false,
 }: PaymentSessionConfig) => {
+  logger.configure({ isEnabled: debug })
+
   const eventEmitter = new EventEmitter<PaymentSessionEvents>()
-  const api = createAPI({ baseURL: apiURL })
   const dom = createDOM()
+  const api = createAPI({ baseURL: `https://${apiHost}/api` })
+  let ws: AcceptNanoWebSocket | undefined
+
   const paymentService = createPaymentService({ api, pollInterval })
     .onTransition(state => {
       if (state.matches('creation') || state.matches('fetching')) {
@@ -35,15 +47,30 @@ export const createPaymentSession = ({
       }
 
       if (state.matches('verification')) {
+        if (!ws) {
+          ws = createWebSocket(
+            createWebSocketURL({
+              baseURL: `wss://${apiHost}/websocket`,
+              paymentToken: state.context.payment.token,
+            }),
+          )
+
+          ws.on('payment_verified', payment => {
+            paymentService.send({ type: 'PAYMENT_VERIFIED', payment })
+          })
+        }
+
         dom.renderPayment(state.context.payment)
       }
 
       if (state.matches('success')) {
+        ws && ws.close()
         dom.renderSuccess()
         eventEmitter.emit('end', null, state.context.payment)
       }
 
       if (state.matches('failure')) {
+        ws && ws.close()
         dom.renderFailure(state.context.error)
         eventEmitter.emit('end', state.context.error, null)
       }

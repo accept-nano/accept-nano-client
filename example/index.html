@@ -71,8 +71,8 @@
     <h1>Accept Nano Demo</h1>
 
     <form id="paymentForm">
-      <label>URL</label>
-      <input type="text" name="apiURL" value="https://accept-nano-demo.put.io/api" />
+      <label>API Host</label>
+      <input type="text" name="apiHost" value="accept-nano-demo.put.io" />
 
       <label>Amount</label>
       <input type="text" name="amount" value="0.000001" />
@@ -97,7 +97,8 @@
       e.preventDefault()
 
       const session = window.acceptNano.createSession({
-        apiURL: form.apiURL.value,
+        apiHost: form.apiHost.value,
+        debug: true
       })
 
       session.on('start', () => {
