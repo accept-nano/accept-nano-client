@@ -20,7 +20,7 @@
     "prebuild": "yarn clean",
     "build": "tsdx build && yarn build:umd && yarn build:example",
     "build:umd": "parcel build src/index.ts --global acceptNano --no-cache -d umd --out-file index.js",
-    "build:example": "cp src/example/index.html example/index.html && replace-in-file ../index.ts https://unpkg.com/@accept-nano/client@beta example/index.html",
+    "build:example": "cp src/example/index.html example/index.html && replace-in-file ../index.ts https://unpkg.com/@accept-nano/client@2 example/index.html",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "yarn build",
