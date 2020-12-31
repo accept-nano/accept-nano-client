@@ -15,9 +15,9 @@ _accept-nano-client_ is a JavaScript package that helps you to communicate with 
 ### via NPM
 
 ```bash
-npm install accept-nano-client
+npm install @accept-nano/client
 
-yarn add accept-nano-client
+yarn add @accept-nano/client
 ```
 
 #### ES Modules / TypeScript
