@@ -50,6 +50,15 @@ After the _accept-nano-client_ script is loaded there will be a global variable 
 
 ### Creating a Payment Session
 
+The **apiHost specified must have SSL/HTTPS enabled** (Accessible via https://apiHost).
+By default accept-nano server is not setup with SSL. 
+Ensure the certificate is not self-signed to prevent browser and anti-virus security insecure webpage security prompts.
+
+Specifying no port for apiHost defaults to port 443.
+To ensure your server is reachable when using a non-standard port, specify apiHost like the following example:
+
+```apiHost: 'accept-nano-demo.put.io:2107',``` (Replace port 2107 with your https:// accessible port).
+
 To be able to initiate the payment process, you **must create a new payment session.**
 
 ```ts
