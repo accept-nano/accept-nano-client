@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "@byungi/event-emitter": "^1.2.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "big.js": "^6.0.1",
     "qrcode": "^1.4.4",
     "redom": "^3.27.1",
