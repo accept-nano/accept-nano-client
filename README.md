@@ -129,7 +129,7 @@ session.verifyPayment({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' })
 
 ## Who is using _accept-nano-client_ in production?
 
-- [Put.io](https://put.io)
+- [put.io](https://put.io)
 - [My Nano Ninja](https://mynano.ninja)
 
 Please send a PR to list your site if _accept-nano_ is helping you to receive NANO payments.
